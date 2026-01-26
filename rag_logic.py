@@ -1,5 +1,4 @@
 import json
-<<<<<<< HEAD
 import math
 import os
 import re
@@ -36,7 +35,6 @@ class RAGPipeline:
 
         self.reload()
 
-=======
 import os
 import re
 from typing import List, Dict, Any
@@ -59,7 +57,6 @@ class RAGPipeline:
         self._fit_vectorizer()
         self._last_mtime = self._get_mtime()
 
->>>>>>> 25f0622 (Initial commit)
     def _get_mtime(self):
         try:
             return os.path.getmtime(self.data_source)
@@ -78,7 +75,7 @@ class RAGPipeline:
         except FileNotFoundError:
             return []
 
-<<<<<<< HEAD
+
     def reload(self) -> None:
         self.knowledge_base = self._load_data()
         self._last_mtime = self._get_mtime()
@@ -126,7 +123,7 @@ class RAGPipeline:
             denom = f + k1 * (1 - b + b * (dl / avgdl))
             score += idf * ((f * (k1 + 1)) / denom)
         return score
-=======
+
     @staticmethod
     def _clean(text: str) -> str:
         text = text.lower()
@@ -140,12 +137,10 @@ class RAGPipeline:
             return
         corpus = [self._clean(x.get("content", "")) for x in self.knowledge_base]
         self.doc_vectors = self.vectorizer.fit_transform(corpus)
->>>>>>> 25f0622 (Initial commit)
 
     def search(self, query: str, top_k: int = 3) -> List[Dict[str, Any]]:
         self._maybe_reload()
 
-<<<<<<< HEAD
         if not self.knowledge_base:
             return []
 
@@ -172,7 +167,6 @@ class RAGPipeline:
             doc = dict(self.knowledge_base[i])
             doc["confidence_score"] = norm
             results.append(doc)
-=======
         if not self.knowledge_base or self.doc_vectors is None:
             return []
 
@@ -190,6 +184,5 @@ class RAGPipeline:
                 doc = dict(self.knowledge_base[idx])
                 doc["confidence_score"] = score
                 results.append(doc)
->>>>>>> 25f0622 (Initial commit)
 
         return results
