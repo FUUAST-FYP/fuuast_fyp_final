@@ -6,3 +6,5 @@ dist
 __pycache__
 *.pyc
 kb_snapshots
+!knowledge_base.json
+!kb_current.json
