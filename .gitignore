@@ -169,3 +169,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+kb/snapshots/web_raw.jsonl
+kb/snapshots/*.html
+kb/snapshots/*.txt

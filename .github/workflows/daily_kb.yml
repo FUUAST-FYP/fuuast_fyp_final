@@ -1,30 +1,41 @@
-name: Daily FUUAST KB Update
+permissions:
+  contents: write
+
+name: Daily KB Update
 
 on:
   schedule:
-    - cron: "30 10 * * *"
+    - cron: "0 3 * * *"   # daily 03:00 UTC
   workflow_dispatch:
 
 jobs:
-  crawl:
+  build-kb:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install deps
-        run: pip install requests beautifulsoup4
-
-      - name: Crawl and update KB
-        run: python scripts/crawl_fuuast.py
-
-      - name: Commit changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add kb_snapshots kb_current.json kb_manifest.json
+          pip install requests beautifulsoup4 lxml
+
+      - name: Crawl website
+        run: |
+          python scripts/crawl_site.py
+
+      - name: Build KB
+        run: |
+          python scripts/build_kb.py
+
+      - name: Commit & Push
+        run: |
+          git config user.name "kb-bot"
+          git config user.email "kb-bot@users.noreply.github.com"
+          git add kb/kb_current.jsonl kb/snapshots/web_raw.jsonl
           git commit -m "Daily KB update" || echo "No changes"
           git push
