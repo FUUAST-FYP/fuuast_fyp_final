@@ -1,0 +1,5 @@
+{
+  "name": "FUUAST AI Academic Assistant",
+  "description": "An official, document-grounded AI helpdesk for Federal Urdu University of Arts, Science & Technology, demonstrating RAG principles and controlled AI behavior.",
+  "requestFramePermissions": []
+}
