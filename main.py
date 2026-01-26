@@ -74,13 +74,31 @@ def _resolve_kb_path() -> Optional[str]:
     """
     kb_name = os.getenv("KNOWLEDGE_BASE_PATH", "kb_current.json")
 
+    # NOTE: On Vercel (and sometimes locally), the current working directory
+    # can be different depending on how the function is invoked. We'll search
+    # both CWD and the directory of this file.
+    try:
+        from pathlib import Path
+
+        base_dir = str(Path(__file__).resolve().parent)
+    except Exception:
+        base_dir = os.getcwd()
+
     candidates = [
+        # Relative (works if CWD is repo root)
         kb_name,
         "kb_current.json",
         "knowledge_base.json",
+
+        # CWD-based
         os.path.join(os.getcwd(), kb_name),
         os.path.join(os.getcwd(), "kb_current.json"),
         os.path.join(os.getcwd(), "knowledge_base.json"),
+
+        # File-location based (works even if CWD is /api)
+        os.path.join(base_dir, kb_name),
+        os.path.join(base_dir, "kb_current.json"),
+        os.path.join(base_dir, "knowledge_base.json"),
     ]
 
     for p in candidates:
