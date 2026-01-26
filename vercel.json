@@ -1,23 +1,14 @@
 {
-<<<<<<< HEAD
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "functions": {
-    "api/**": {
-      "maxDuration": 30,
-      "excludeFiles": "{.git,.github,.vercel,node_modules,dist,public,app,kb_snapshots,scripts}/**"
-    }
-  }
-=======
   "version": 2,
   "functions": {
     "api/index.py": {
-      "runtime": "python3.11"
+      "runtime": "python3.12",
+      "maxDuration": 30
     }
   },
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.py" },
     { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/" }
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
->>>>>>> 25f0622 (Initial commit)
 }
