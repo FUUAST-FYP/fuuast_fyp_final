@@ -73,42 +73,36 @@ def _resolve_kb_path() -> Optional[str]:
     isn't present on Vercel due to ignore rules.
     """
     kb_name = os.getenv("KNOWLEDGE_BASE_PATH", "kb/kb_current.jsonl")
-
-    # NOTE: On Vercel (and sometimes locally), the current working directory
-    # can be different depending on how the function is invoked. We'll search
-    # both CWD and the directory of this file.
+    
+    # Define base directories
+    cwd = os.getcwd()
     try:
-        from pathlib import Path
+        # Directory where this script lives
+        script_dir = str(Path(__file__).resolve().parent)
+    except NameError:
+        # Fallback if __file__ isn't defined (e.g., some interactive shells)
+        script_dir = cwd
 
-        base_dir = str(Path(__file__).resolve().parent)
-    except Exception:
-        base_dir = os.getcwd()
-
+    # Construct unique candidate paths
     candidates = [
-        # Relative (works if CWD is repo root)
-        kb_name,
-        "kb_current.json",
-        "knowledge_base.json",
-
-        # CWD-based
-        os.path.join(os.getcwd(), kb_name),
-        os.path.join(os.getcwd(), "kb_current.json"),
-        os.path.join(os.getcwd(), "knowledge_base.json"),
-
-        # File-location based (works even if CWD is /api)
-        os.path.join(base_dir, kb_name),
-        os.path.join(base_dir, "kb_current.json"),
-        os.path.join(base_dir, "knowledge_base.json"),
+        kb_name,                               # Relative path
+        os.path.join(cwd, kb_name),            # CWD + Env path
+        os.path.join(script_dir, kb_name),     # Script dir + Env path
+        os.path.join(cwd, "kb_current.json"),  # Fallback 1
+        os.path.join(cwd, "knowledge_base.json") # Fallback 2
     ]
 
     for p in candidates:
         try:
-            if p and os.path.exists(p):
-                return p
+            # Check if path exists and is a file
+            if p and os.path.isfile(p):
+                # Check if file is not empty
+                if os.path.getsize(p) > 0:
+                    return str(Path(p).resolve())
         except Exception:
             continue
+            
     return None
-
 
 def get_rag() -> Optional[RAGPipeline]:
     """

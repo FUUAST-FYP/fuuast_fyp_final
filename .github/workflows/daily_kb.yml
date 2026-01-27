@@ -5,12 +5,14 @@ name: Daily KB Update
 
 on:
   schedule:
-    - cron: "0 3 * * *"   # daily 03:00 UTC
+    - cron: "0 3 * * *"
   workflow_dispatch:
 
 jobs:
   build-kb:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,18 +26,29 @@ jobs:
         run: |
           pip install requests beautifulsoup4 lxml
 
-      - name: Crawl website
+      - name: Crawl website (don’t block KB build)
         run: |
-          python scripts/crawl_site.py
+          python scripts/crawl_site.py || echo "Crawl failed/skipped — continuing"
 
-      - name: Build KB
+      - name: Build KB (always)
         run: |
           python scripts/build_kb.py
+
+      - name: Sanity check KB not empty
+        run: |
+          python - <<'PY'
+          import os, sys
+          p="kb/kb_current.jsonl"
+          if (not os.path.exists(p)) or os.path.getsize(p) < 200:
+              print("KB is empty/suspiciously small:", p)
+              sys.exit(1)
+          print("KB OK:", os.path.getsize(p), "bytes")
+          PY
 
       - name: Commit & Push
         run: |
           git config user.name "kb-bot"
           git config user.email "kb-bot@users.noreply.github.com"
-          git add kb/kb_current.jsonl kb/snapshots/web_raw.jsonl
+          git add kb/kb_current.jsonl kb/snapshots/web_raw.jsonl || true
           git commit -m "Daily KB update" || echo "No changes"
           git push

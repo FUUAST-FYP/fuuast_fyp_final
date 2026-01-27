@@ -11,11 +11,15 @@ def chunk_text(text: str, chunk_size=750, overlap=120):
         return []
     chunks = []
     i = 0
-    while i < len(text):
-        j = min(len(text), i + chunk_size)
+    n = len(text)
+    while i < n:
+        j = min(n, i + chunk_size)
         chunks.append(text[i:j])
-        i = max(j - overlap, j)
+        if j >= n:
+            break
+        i = max(0, j - overlap)
     return chunks
+
 
 def _load_pdf_kb(path: str):
     if not os.path.exists(path):

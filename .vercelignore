@@ -5,6 +5,10 @@ dist
 .github
 __pycache__
 *.pyc
-kb_snapshots
+
+# Don’t deploy large crawler artifacts
+kb/snapshots
+
+# DO deploy the KB used at runtime
+!kb/kb_current.jsonl
 !knowledge_base.json
-!kb_current.json
