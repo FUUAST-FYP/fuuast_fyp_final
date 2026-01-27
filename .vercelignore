@@ -6,9 +6,9 @@ dist
 __pycache__
 *.pyc
 
-# Don’t deploy large crawler artifacts
+# Ignore big crawler outputs
 kb/snapshots
 
-# DO deploy the KB used at runtime
-!kb/kb_current.jsonl
+# Keep runtime KBs
 !knowledge_base.json
+!kb/kb_current.jsonl

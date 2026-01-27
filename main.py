@@ -2,6 +2,7 @@ import logging
 import os
 import time
 import uuid
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from fastapi import FastAPI, HTTPException, Request
@@ -69,37 +70,44 @@ _kb_path_used: Optional[str] = None
 
 def _resolve_kb_path() -> Optional[str]:
     """
-    Try multiple candidate paths. This avoids crashes if KB file
-    isn't present on Vercel due to ignore rules.
+    Try multiple candidate paths to find the KB file. 
+    Skips files that are 0 bytes (empty).
     """
+    # 1. Get the primary name from Environment or default
     kb_name = os.getenv("KNOWLEDGE_BASE_PATH", "kb/kb_current.jsonl")
     
-    # Define base directories
+    # 2. Setup directory references
     cwd = os.getcwd()
     try:
-        # Directory where this script lives
-        script_dir = str(Path(__file__).resolve().parent)
-    except NameError:
-        # Fallback if __file__ isn't defined (e.g., some interactive shells)
-        script_dir = cwd
+        # The directory where main.py actually lives
+        base_dir = Path(__file__).resolve().parent
+    except Exception:
+        base_dir = Path(cwd)
 
-    # Construct unique candidate paths
+    # 3. Build a list of potential full paths
     candidates = [
-        kb_name,                               # Relative path
-        os.path.join(cwd, kb_name),            # CWD + Env path
-        os.path.join(script_dir, kb_name),     # Script dir + Env path
-        os.path.join(cwd, "kb_current.json"),  # Fallback 1
-        os.path.join(cwd, "knowledge_base.json") # Fallback 2
+        # Check relative to CWD
+        os.path.join(cwd, kb_name),
+        os.path.join(cwd, "kb/kb_current.jsonl"),
+        os.path.join(cwd, "knowledge_base.json"),
+        
+        # Check relative to where the script is (Best for Vercel)
+        str(base_dir / kb_name),
+        str(base_dir / "kb/kb_current.jsonl"),
+        str(base_dir / "knowledge_base.json"),
     ]
 
     for p in candidates:
         try:
-            # Check if path exists and is a file
+            # Check if it's a real file
             if p and os.path.isfile(p):
-                # Check if file is not empty
+                # Check if it actually contains data (Skip 0-byte files)
                 if os.path.getsize(p) > 0:
+                    logger.info(f"Successfully resolved KB path: {p}")
                     return str(Path(p).resolve())
-        except Exception:
+                else:
+                    logger.warning(f"Found KB file at {p} but it is EMPTY (0 bytes). Skipping...")
+        except Exception as e:
             continue
             
     return None
