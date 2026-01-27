@@ -72,7 +72,7 @@ def _resolve_kb_path() -> Optional[str]:
     Try multiple candidate paths. This avoids crashes if KB file
     isn't present on Vercel due to ignore rules.
     """
-    kb_name = os.getenv("KNOWLEDGE_BASE_PATH", "kb_current.json")
+    kb_name = os.getenv("KNOWLEDGE_BASE_PATH", "kb/kb_current.jsonl")
 
     # NOTE: On Vercel (and sometimes locally), the current working directory
     # can be different depending on how the function is invoked. We'll search

@@ -70,13 +70,50 @@ class RAGPipeline:
             self.reload()
 
     def _load_data(self) -> List[Dict[str, Any]]:
+    try:
+        # JSONL support
+        if self.data_source.endswith(".jsonl"):
+            items: List[Dict[str, Any]] = []
+            with open(self.data_source, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    obj = json.loads(line)
+
+                    # if someone accidentally wrote a JSON array on a line, flatten it
+                    if isinstance(obj, list):
+                        for x in obj:
+                            if isinstance(x, dict):
+                                items.append(x)
+                    elif isinstance(obj, dict):
+                        items.append(obj)
+
+            # normalize keys so the rest of your code works
+            for d in items:
+                if "content" not in d:
+                    d["content"] = d.get("text", "")  # your crawler uses "text"
+                if "sourceDocument" not in d:
+                    d["sourceDocument"] = d.get("title") or "FUUAST Website"
+                if "pageNumber" not in d:
+                    d["pageNumber"] = d.get("page")  # if you ever add pdf pages
+            return items
+
+        # JSON support (old knowledge_base.json)
         with open(self.data_source, "r", encoding="utf-8") as f:
             data = json.load(f)
-        # be defensive
-        if isinstance(data, dict):
-            # if someone stored under {"items": [...]}
-            data = data.get("items", [])
-        return data if isinstance(data, list) else []
+            if isinstance(data, dict) and "items" in data:
+                data = data["items"]
+            if isinstance(data, list):
+                for d in data:
+                    if isinstance(d, dict) and "content" not in d:
+                        d["content"] = d.get("text", "")
+                return data
+            return []
+
+    except FileNotFoundError:
+        return []
+
 
     def reload(self) -> None:
         self.knowledge_base = self._load_data()
