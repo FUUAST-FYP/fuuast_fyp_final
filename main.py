@@ -275,13 +275,16 @@ def root():
 @app.get("/health")
 def health():
     rag = get_rag()
+    kb_items = len(rag.knowledge_base) if rag else 0
     return {
         "status": "ok",
         "service": APP_NAME,
         "kb_loaded": rag is not None,
         "kb_path": _kb_path_used,
+        "kb_items": kb_items,
         "kb_error": _rag_error,
     }
+
 
 
 # IMPORTANT: this matches your deployed check URL: /api/health
