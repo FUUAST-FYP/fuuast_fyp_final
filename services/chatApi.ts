@@ -2,10 +2,13 @@ export type ChatApiSource =
   | { label: string; url?: string; sourceDocument?: string; pageNumber?: number };
 
 export async function sendChat(message: string, session_id = "guest_session") {
+  const isHeavyQuery = /(fee|structure|merit|result|admission|convocation|schedule|bscs|bs\s*computer)/i.test(message);
+  const top_k = isHeavyQuery ? 6 : 4;
+
   const res = await fetch(`/api/v1/chat`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message, session_id, top_k: 3 }),
+    body: JSON.stringify({ message, session_id, top_k }),
   });
 
   if (!res.ok) {
@@ -17,6 +20,7 @@ export async function sendChat(message: string, session_id = "guest_session") {
     status: string;
     timestamp: string;
     answer: string;
-    sources: ChatApiSource[];
+    sources: { label: string; url?: string; sourceDocument?: string; pageNumber?: number }[];
   };
 }
+
