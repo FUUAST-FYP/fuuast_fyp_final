@@ -7,7 +7,7 @@
       "config": {
         "includeFiles": [
           "knowledge_base.json",
-          "kb/**"
+          "kb/kb_current.jsonl"
         ]
       }
     },

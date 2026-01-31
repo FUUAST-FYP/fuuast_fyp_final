@@ -5,13 +5,13 @@ name: Daily KB Update
 
 on:
   schedule:
-    - cron: "0 3 * * *"
+    - cron: "0 10 * * *"
   workflow_dispatch:
 
 jobs:
   build-kb:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 55
 
     steps:
       - name: Checkout
@@ -30,12 +30,13 @@ jobs:
       # Crawl (HTML + PDF links). If crawl fails, we still build KB from curated knowledge_base.json
       - name: Crawl website
         run: |
-          python scripts/crawl_site.py --max-pages 500 --timeout 20 --delay 0.20 || echo "Crawl failed — continuing"
+          python scripts/crawl_site.py --max-pages 120 --timeout 20 --delay 0.20 || echo "Crawl failed — continuing"
 
       # Extract PDFs with conservative limits for Actions runtime
       - name: Extract PDFs
         run: |
-          python scripts/extract_pdfs.py --max-pdfs 40 --timeout 45 --sleep 0.20 --max-mb 25 || echo "PDF extract failed — continuing"
+          python scripts/extract_pdfs.py --max-pdfs 12 --timeout 35 --sleep 0.20 --max-mb 25 || echo "PDF extract failed — continuing"
+
 
       - name: Build KB
         run: |
