@@ -170,6 +170,7 @@ dist-ssr
 *.sln
 *.sw?
 
+kb/snapshots/pdf_raw.jsonl
 kb/snapshots/web_raw.jsonl
-kb/snapshots/*.html
-kb/snapshots/*.txt
+kb/snapshots/*.jsonl
+!kb/kb_current.jsonl
