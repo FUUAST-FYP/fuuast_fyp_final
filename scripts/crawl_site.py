@@ -1,6 +1,31 @@
-import re, json, hashlib, time
+#!/usr/bin/env python3
+"""
+crawl_site.py
+
+Bootstrap crawler for https://fuuast.edu.pk
+
+Outputs:
+- kb/snapshots/web_raw.jsonl      (HTML pages -> cleaned text)
+- kb/snapshots/pdf_links.jsonl    (discovered PDF URLs only; no PDF downloading here)
+
+Design goals:
+- Deterministic & safe: avoid infinite crawling loops
+- Respectful: small delay between requests
+- Practical: remove header/footer/nav noise for better KB quality
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import time
+from collections import deque
 from datetime import datetime, timezone
-from urllib.parse import urljoin, urlparse
+from typing import Dict, Iterable, List, Optional, Set, Tuple
+from urllib.parse import urljoin, urlparse, urlunparse
 
 import requests
 from bs4 import BeautifulSoup
@@ -10,26 +35,61 @@ ALLOWED_DOMAIN = urlparse(BASE).netloc
 
 HEADERS = {"User-Agent": "FUUAST-Academic-Assistant/1.0 (respectful crawler)"}
 
-SKIP_EXT = (".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".ico",
-            ".mp4", ".mp3", ".zip", ".rar", ".css", ".js")
+SKIP_EXT = (
+    ".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".ico",
+    ".mp4", ".mp3", ".zip", ".rar", ".css", ".js",
+)
 
-def is_allowed(url: str) -> bool:
-    u = urlparse(url)
-    if u.scheme not in ("http", "https"):
-        return False
-    if u.netloc and u.netloc != ALLOWED_DOMAIN:
-        return False
-    path = (u.path or "").lower()
-    return not any(path.endswith(ext) for ext in SKIP_EXT)
+def sha1(s: str) -> str:
+    return hashlib.sha1(s.encode("utf-8")).hexdigest()
 
-def clean_text(html: str) -> tuple[str, str]:
+def normalize_url(u: str) -> str:
+    """
+    Normalize URL:
+    - absolute
+    - https scheme
+    - strip fragments
+    - drop query params (reduces duplicates / infinite loops)
+    - strip trailing slash (except root)
+    """
+    u = (u or "").strip()
+    if not u:
+        return ""
+    p = urlparse(u)
+    scheme = "https"
+    netloc = p.netloc
+    path = p.path or "/"
+
+    # remove fragment and query
+    p2 = (scheme, netloc, path, "", "", "")
+    out = urlunparse(p2)
+
+    if out.endswith("/") and out != "https://%s/" % netloc:
+        out = out[:-1]
+    return out
+
+def is_internal(u: str) -> bool:
+    try:
+        p = urlparse(u)
+        return p.netloc == ALLOWED_DOMAIN
+    except Exception:
+        return False
+
+def looks_like_pdf(u: str) -> bool:
+    u_low = (u or "").lower()
+    return (".pdf" in u_low) and (u_low.endswith(".pdf") or ".pdf/" in u_low or ".pdf?" in u_low)
+
+def should_skip(u: str) -> bool:
+    u_low = (u or "").lower()
+    return any(u_low.endswith(ext) for ext in SKIP_EXT)
+
+def clean_html_to_text(html: str) -> Tuple[str, str]:
     soup = BeautifulSoup(html, "lxml")
 
-    # remove obvious noise
     for tag in soup(["script", "style", "noscript", "svg"]):
         tag.decompose()
 
-    # optional: remove common layout blocks
+    # remove common layout blocks
     for selector in ["header", "footer", "nav", "aside"]:
         for tag in soup.select(selector):
             tag.decompose()
@@ -37,74 +97,157 @@ def clean_text(html: str) -> tuple[str, str]:
     title = (soup.title.get_text(" ", strip=True) if soup.title else "").strip()
     text = soup.get_text("\n", strip=True)
 
-    # normalize whitespace
-    text = re.sub(r"\n{3,}", "\n\n", text)
-    text = re.sub(r"[ \t]{2,}", " ", text).strip()
+    # normalize whitespace & drop tiny lines
+    lines = [re.sub(r"\s+", " ", ln).strip() for ln in text.splitlines()]
+    lines = [ln for ln in lines if len(ln) >= 3]
+    text = "\n".join(lines)
     return title, text
 
-def hash_text(t: str) -> str:
-    return hashlib.sha256(t.encode("utf-8")).hexdigest()
+def extract_links(html: str, page_url: str) -> Tuple[Set[str], Set[str]]:
+    soup = BeautifulSoup(html, "lxml")
+    page_links: Set[str] = set()
+    pdf_links: Set[str] = set()
 
-def crawl(seed_urls: list[str], max_pages=500, sleep_s=0.4):
-    seen = set()
-    queue = list(seed_urls)
-
-    while queue and len(seen) < max_pages:
-        url = queue.pop(0)
-        url = url.split("#")[0]
-        if url in seen:
-            continue
-        if not is_allowed(url):
+    for a in soup.find_all("a", href=True):
+        href = (a.get("href") or "").strip()
+        if not href or href.startswith("#") or href.startswith("mailto:") or href.startswith("tel:"):
             continue
 
-        try:
-            r = requests.get(url, headers=HEADERS, timeout=25)
-            if r.status_code != 200 or "text/html" not in r.headers.get("content-type", ""):
-                seen.add(url)
-                continue
+        full = normalize_url(urljoin(page_url, href))
+        if not full:
+            continue
 
-            title, text = clean_text(r.text)
-            if len(text) < 200:  # ignore empty/low-content pages
-                seen.add(url)
-                continue
+        if looks_like_pdf(full):
+            pdf_links.add(full)
+            continue
 
-            fetched_at = datetime.now(timezone.utc).isoformat()
-            record = {
-                "source_type": "web",
-                "url": url,
-                "title": title,
-                "fetched_at": fetched_at,
-                "text": text,
-                "hash": hash_text(text),
-            }
-            yield record
+        if should_skip(full):
+            continue
 
-            # discover links
-            soup = BeautifulSoup(r.text, "lxml")
-            for a in soup.select("a[href]"):
-                href = a.get("href", "").strip()
-                if not href:
+        if is_internal(full):
+            page_links.add(full)
+
+    return page_links, pdf_links
+
+def load_seeds(seeds_file: Optional[str]) -> List[str]:
+    seeds: List[str] = []
+    if seeds_file and os.path.exists(seeds_file):
+        with open(seeds_file, "r", encoding="utf-8") as f:
+            for ln in f:
+                ln = ln.strip()
+                if not ln or ln.startswith("#"):
                     continue
-                nxt = urljoin(url, href)
-                nxt = nxt.split("#")[0]
-                if is_allowed(nxt) and nxt not in seen:
-                    queue.append(nxt)
+                seeds.append(normalize_url(ln))
+    if not seeds:
+        seeds = [normalize_url(BASE)]
+    # unique and keep order
+    seen = set()
+    out = []
+    for u in seeds:
+        if u and u not in seen:
+            seen.add(u)
+            out.append(u)
+    return out
 
-            seen.add(url)
-            time.sleep(sleep_s)
+def crawl(
+    seeds: List[str],
+    out_web: str,
+    out_pdfs: str,
+    max_pages: int = 800,
+    timeout_s: int = 20,
+    delay_s: float = 0.25,
+    min_text_chars: int = 300,
+) -> Tuple[int, int]:
+    os.makedirs(os.path.dirname(out_web), exist_ok=True)
+    os.makedirs(os.path.dirname(out_pdfs), exist_ok=True)
 
-        except Exception:
+    q = deque(seeds)
+    seen: Set[str] = set()
+    pdf_seen: Set[str] = set()
+
+    pages_written = 0
+    pdf_written = 0
+
+    with open(out_web, "w", encoding="utf-8") as fweb, open(out_pdfs, "w", encoding="utf-8") as fpdf:
+        while q and pages_written < max_pages:
+            url = q.popleft()
+            if not url or url in seen:
+                continue
             seen.add(url)
-            continue
+
+            try:
+                r = requests.get(url, headers=HEADERS, timeout=timeout_s, allow_redirects=True)
+                ct = (r.headers.get("content-type") or "").lower()
+
+                # If we landed on a PDF, record it and skip parsing as HTML
+                if "application/pdf" in ct or looks_like_pdf(url):
+                    if url not in pdf_seen:
+                        pdf_seen.add(url)
+                        fpdf.write(json.dumps({"url": url, "discovered_from": None}, ensure_ascii=False) + "\n")
+                        pdf_written += 1
+                    continue
+
+                if r.status_code != 200 or "text/html" not in ct:
+                    continue
+
+                title, text = clean_html_to_text(r.text)
+                if not text or len(text) < min_text_chars:
+                    # still extract links to reach deeper important pages
+                    page_links, pdf_links = extract_links(r.text, url)
+                else:
+                    page_links, pdf_links = extract_links(r.text, url)
+
+                    rec = {
+                        "id": f"web::{sha1(url)[:12]}",
+                        "source_type": "web",
+                        "url": url,
+                        "title": title,
+                        "fetched_at": datetime.now(timezone.utc).isoformat(),
+                        "text": text,
+                    }
+                    fweb.write(json.dumps(rec, ensure_ascii=False) + "\n")
+                    pages_written += 1
+
+                for p in pdf_links:
+                    if p not in pdf_seen:
+                        pdf_seen.add(p)
+                        fpdf.write(json.dumps({"url": p, "discovered_from": url}, ensure_ascii=False) + "\n")
+                        pdf_written += 1
+
+                for nxt in page_links:
+                    if nxt not in seen:
+                        q.append(nxt)
+
+            except Exception:
+                continue
+            finally:
+                time.sleep(delay_s)
+
+    return pages_written, pdf_written
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seeds", default=os.path.join("scripts", "seeds.txt"), help="Seed URL list file")
+    ap.add_argument("--out-web", default=os.path.join("kb", "snapshots", "web_raw.jsonl"))
+    ap.add_argument("--out-pdfs", default=os.path.join("kb", "snapshots", "pdf_links.jsonl"))
+    ap.add_argument("--max-pages", type=int, default=800)
+    ap.add_argument("--timeout", type=int, default=20)
+    ap.add_argument("--delay", type=float, default=0.25)
+    ap.add_argument("--min-text-chars", type=int, default=300)
+    args = ap.parse_args()
+
+    seeds = load_seeds(args.seeds)
+    pages, pdfs = crawl(
+        seeds=seeds,
+        out_web=args.out_web,
+        out_pdfs=args.out_pdfs,
+        max_pages=args.max_pages,
+        timeout_s=args.timeout,
+        delay_s=args.delay,
+        min_text_chars=args.min_text_chars,
+    )
+    print(f"Saved web pages: {pages} -> {args.out_web}")
+    print(f"Saved pdf links: {pdfs} -> {args.out_pdfs}")
 
 if __name__ == "__main__":
-    out = "kb/snapshots/web_raw.jsonl"
-    seed = [BASE, urljoin(BASE, "/admissions/"), urljoin(BASE, "/fee-structure/")]
-    import os
-    os.makedirs("kb/snapshots", exist_ok=True)
-
-    with open(out, "w", encoding="utf-8") as f:
-        for rec in crawl(seed_urls=seed, max_pages=800):
-            f.write(json.dumps(rec, ensure_ascii=False) + "\n")
-
-    print("Saved:", out)
+    main()

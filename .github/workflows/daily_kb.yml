@@ -11,7 +11,7 @@ on:
 jobs:
   build-kb:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
@@ -24,15 +24,26 @@ jobs:
 
       - name: Install deps
         run: |
-          pip install requests beautifulsoup4 lxml
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      - name: Crawl website (don’t block KB build)
+      # Crawl (HTML + PDF links). If crawl fails, we still build KB from curated knowledge_base.json
+      - name: Crawl website
         run: |
-          python scripts/crawl_site.py || echo "Crawl failed/skipped — continuing"
+          python scripts/crawl_site.py --max-pages 500 --timeout 20 --delay 0.20 || echo "Crawl failed — continuing"
 
-      - name: Build KB (always)
+      # Extract PDFs with conservative limits for Actions runtime
+      - name: Extract PDFs
+        run: |
+          python scripts/extract_pdfs.py --max-pdfs 40 --timeout 45 --sleep 0.20 --max-mb 25 || echo "PDF extract failed — continuing"
+
+      - name: Build KB
         run: |
           python scripts/build_kb.py
+
+      - name: Rotate KB snapshots
+        run: |
+          python scripts/rotate_kb.py --keep 7 || true
 
       - name: Sanity check KB not empty
         run: |
@@ -49,6 +60,6 @@ jobs:
         run: |
           git config user.name "kb-bot"
           git config user.email "kb-bot@users.noreply.github.com"
-          git add kb/kb_current.jsonl kb/snapshots/web_raw.jsonl || true
+          git add kb/kb_current.jsonl kb/snapshots/kb_*.jsonl scripts/seeds.txt || true
           git commit -m "Daily KB update" || echo "No changes"
           git push
