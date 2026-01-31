@@ -182,11 +182,11 @@ def _build_sources(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         label = doc_name
         if page is not None:
             label = f"{label} (p.{page})"
-
-        # Fix encoding artifacts & HTML entities
         label = _html.unescape(label).replace("â€“", "–").replace("â€”", "—")
 
-        key = (url, doc_name, page)
+        # ✅ Prefer URL-based dedupe when URL exists
+        key = ("url", url) if url else ("doc", doc_name, page)
+
         if key in seen:
             continue
         seen.add(key)
@@ -199,6 +199,7 @@ def _build_sources(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         })
 
     return sources
+
 
 
 def _make_context(docs: List[Dict[str, Any]], max_chunks: int = 6):
