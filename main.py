@@ -2,6 +2,7 @@ import logging
 import os
 import time
 import uuid
+import html as _html
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -130,12 +131,12 @@ def get_rag() -> Optional[RAGPipeline]:
     try:
         _rag = RAGPipeline(kb_path)
         _kb_path_used = kb_path
+        _rag_error = None   # ✅ add this line
         return _rag
     except Exception as e:
         _rag_error = f"Failed to load KB at {kb_path}: {e}"
         logger.exception(_rag_error)
-        return None
-
+    return None
 
 # ---------------------------
 # Request model
@@ -171,26 +172,39 @@ def _is_smalltalk(msg: str) -> Optional[str]:
 
 def _build_sources(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     sources: List[Dict[str, Any]] = []
+    seen = set()
+
     for d in docs:
-        label = d.get("sourceDocument") or d.get("category") or "University Source"
+        url = (d.get("url") or "").strip() or None
+        doc_name = d.get("sourceDocument") or d.get("category") or "University Source"
         page = d.get("pageNumber")
+
+        label = doc_name
         if page is not None:
             label = f"{label} (p.{page})"
-        sources.append(
-            {
-                "label": label,
-                "url": d.get("url"),
-                "sourceDocument": d.get("sourceDocument"),
-                "pageNumber": d.get("pageNumber"),
-            }
-        )
+
+        # Fix encoding artifacts & HTML entities
+        label = _html.unescape(label).replace("â€“", "–").replace("â€”", "—")
+
+        key = (url, doc_name, page)
+        if key in seen:
+            continue
+        seen.add(key)
+
+        sources.append({
+            "label": label,
+            "url": url,
+            "sourceDocument": d.get("sourceDocument"),
+            "pageNumber": page,
+        })
+
     return sources
 
 
 def _make_context(docs: List[Dict[str, Any]], max_chunks: int = 6):
     chunks: List[str] = []
     for d in docs:
-        content = (d.get("content") or "").strip()
+        content = (d.get("content") or d.get("text") or "").strip()
         if content:
             chunks.append(content)
     chunks = chunks[:max_chunks]
@@ -328,6 +342,12 @@ def chat(req: ChatRequest):
     answer = _answer_with_llm(msg, docs)
     sources = _build_sources(docs)
 
+    # If user asked for a link, include the first available URL in the answer
+    if "link" in msg.lower() and sources:
+        first_url = next((s.get("url") for s in sources if s.get("url")), None)
+        if first_url and first_url not in answer:
+            answer = f"{answer}\n\nLink: {first_url}"
+
     # Optional polish
     answer = answer.replace("BS CSc", "BSCS")
 
@@ -336,7 +356,7 @@ def chat(req: ChatRequest):
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "answer": answer,
         "sources": sources,
-    }
+}
 
 
 # Backward compatible endpoint
