@@ -1,0 +1,22 @@
+/* Global UI tweaks for mobile + chat modal */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Prevent “rubber band” scroll inside the chat on mobile */
+.chat-scroll {
+  overscroll-behavior: contain;
+}
+
+/* iPhone safe area (bottom) */
+@supports (padding: max(0px)) {
+  .safe-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
