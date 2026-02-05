@@ -108,37 +108,53 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-6 right-6 w-[420px] h-[650px] bg-white rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100 flex flex-col overflow-hidden z-[100] animate-in slide-in-from-bottom-10 fade-in duration-300">
-      <div className="bg-[#1e3a8a] pt-8 pb-6 px-8 text-white relative">
-        <div className="absolute top-4 right-4 flex items-center gap-2">
+    <div
+      className={[
+        // Mobile: full screen modal. Desktop: floating widget.
+        "fixed inset-0 sm:inset-auto sm:bottom-6 sm:right-6",
+        "w-full h-[100dvh] sm:w-[420px] sm:h-[650px]",
+        "bg-white rounded-none sm:rounded-[2.5rem]",
+        "shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] border border-slate-100",
+        "flex flex-col overflow-hidden z-[100]",
+      ].join(" ")}
+      role="dialog"
+      aria-modal="true"
+      aria-label="FUUAST Academic Assistant"
+    >
+      {/* Header */}
+      <div className="bg-emerald-700 pt-6 sm:pt-8 pb-5 sm:pb-6 px-5 sm:px-8 text-white relative">
+        <div className="absolute top-3 right-3 flex items-center gap-2">
           <button
             onClick={onClose}
-            className="hover:bg-white/10 p-2 rounded-full transition-colors w-10 h-10 flex items-center justify-center"
+            className="hover:bg-white/10 p-2 rounded-full transition-colors w-11 h-11 flex items-center justify-center"
+            aria-label="Close"
+            type="button"
           >
             <i className="fas fa-times text-sm"></i>
           </button>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg transform -rotate-3 group">
-            <i className="fas fa-graduation-cap text-[#1e3a8a] text-2xl"></i>
+        <div className="flex items-center gap-4 pr-12">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg transform -rotate-3">
+            <i className="fas fa-graduation-cap text-emerald-700 text-2xl"></i>
           </div>
 
-          <div>
-            <h2 className="text-xl font-bold tracking-tight">
+          <div className="min-w-0">
+            <h2 className="text-lg sm:text-xl font-extrabold tracking-tight truncate">
               FUUAST Academic Assistant
             </h2>
-            <p className="text-blue-100 text-sm font-medium mt-1 flex items-center gap-2">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+            <p className="text-emerald-50/90 text-sm font-medium mt-1 flex items-center gap-2">
+              <span className="w-2 h-2 bg-emerald-300 rounded-full animate-pulse"></span>
               Online • Verified University Info
             </p>
           </div>
         </div>
       </div>
 
+      {/* Messages */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-6 py-6 space-y-4 bg-gradient-to-b from-slate-50 to-white chat-scroll"
+        className="flex-1 overflow-y-auto px-4 sm:px-6 py-5 sm:py-6 space-y-4 bg-gradient-to-b from-slate-50 to-white chat-scroll"
       >
         {messages.map((m) => (
           <div
@@ -146,22 +162,26 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
             className={`flex ${m.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[85%] p-4 rounded-2xl text-[15px] leading-relaxed shadow-sm transition-all hover:shadow-md ${
+              className={[
+                "max-w-[92%] sm:max-w-[85%] p-4 rounded-2xl",
+                "text-[14px] sm:text-[15px] leading-relaxed shadow-sm transition-all",
                 m.role === "user"
-                  ? "bg-[#1e3a8a] text-white rounded-br-none"
-                  : "bg-white border border-slate-100 text-slate-800 rounded-bl-none"
-              }`}
+                  ? "bg-emerald-700 text-white rounded-br-none"
+                  : "bg-white border border-slate-100 text-slate-800 rounded-bl-none",
+              ].join(" ")}
             >
               <p className="whitespace-pre-wrap font-medium">{m.text}</p>
 
               {m.role === "assistant" && renderSources(m.sources)}
 
               <div
-                className={`mt-3 pt-2 border-t flex justify-between items-center opacity-50 text-[9px] font-bold uppercase tracking-wider ${
+                className={[
+                  "mt-3 pt-2 border-t flex justify-between items-center opacity-60",
+                  "text-[9px] font-bold uppercase tracking-wider",
                   m.role === "user"
-                    ? "border-white/10 text-blue-100"
-                    : "border-slate-100 text-slate-400"
-                }`}
+                    ? "border-white/10 text-emerald-50/90"
+                    : "border-slate-100 text-slate-400",
+                ].join(" ")}
               >
                 <span>
                   {m.timestamp.toLocaleTimeString([], {
@@ -179,28 +199,30 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
           <div className="flex justify-start">
             <div className="bg-white border border-slate-100 p-4 rounded-2xl shadow-sm">
               <div className="flex gap-1.5">
-                <div className="w-2 h-2 bg-blue-600/30 rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-blue-600/60 rounded-full animate-bounce delay-100"></div>
-                <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce delay-200"></div>
+                <div className="w-2 h-2 bg-emerald-600/30 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-emerald-600/60 rounded-full animate-bounce delay-100"></div>
+                <div className="w-2 h-2 bg-emerald-600 rounded-full animate-bounce delay-200"></div>
               </div>
             </div>
           </div>
         )}
       </div>
 
-      <div className="p-6 bg-white border-t border-slate-100">
+      {/* Composer */}
+      <div className="p-4 sm:p-6 bg-white border-t border-slate-100 safe-bottom">
         <form onSubmit={handleSend} className="relative group">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about admissions, fees, programs..."
-            className="w-full pl-6 pr-14 py-4 bg-slate-100 rounded-2xl text-[13px] font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 transition-all"
+            className="w-full pl-5 pr-14 py-3.5 sm:py-4 bg-slate-100 rounded-2xl text-[13px] font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
           />
           <button
             type="submit"
             disabled={isLoading}
-            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-[#1e3a8a] hover:bg-blue-800 disabled:opacity-60 rounded-xl flex items-center justify-center transition-all shadow-sm hover:shadow-md"
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-60 rounded-xl flex items-center justify-center transition-all shadow-sm hover:shadow-md"
+            aria-label="Send"
           >
             <i className="fas fa-paper-plane text-white text-sm"></i>
           </button>
