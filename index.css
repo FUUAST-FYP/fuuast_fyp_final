@@ -1,22 +1,17 @@
-/* Global UI tweaks for mobile + chat modal */
+:root{
+  /* Poster palette */
+  --brand-900:#0B3124; /* deep green */
+  --brand-800:#0F3C2C;
+  --brand-700:#145E35; /* main green */
+  --brand-600:#1A7A3F;
 
-html,
-body {
-  height: 100%;
+  --accent-500:#FAC426; /* poster yellow */
 }
 
-body {
-  -webkit-font-smoothing: antialiased;
-}
+html, body { height: 100%; }
+body { -webkit-font-smoothing: antialiased; }
 
-/* Prevent “rubber band” scroll inside the chat on mobile */
-.chat-scroll {
-  overscroll-behavior: contain;
-}
-
-/* iPhone safe area (bottom) */
+/* iPhone safe area for chat input */
 @supports (padding: max(0px)) {
-  .safe-bottom {
-    padding-bottom: max(1rem, env(safe-area-inset-bottom));
-  }
+  .safe-bottom { padding-bottom: max(1rem, env(safe-area-inset-bottom)); }
 }
