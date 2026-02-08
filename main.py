@@ -395,6 +395,38 @@ def chat(req: ChatRequest):
                 "answer": out["answer"],
                 "sources": out.get("sources", []),
             }
+        
+        # If it looks like a timetable/availability question but timetable engine couldn't answer,
+    # do NOT fall back to website RAG (prevents "I don't have that information").
+    tt_keywords = [
+        "timetable", "time table", "schedule", "routine",
+        "free", "available", "availability", "busy", "khali",
+        "room", "lab", "section", "bs"
+    ]
+    is_tt_query = any(k in msg.lower() for k in tt_keywords)
+
+    if is_tt_query:
+        if not tt:
+            return {
+                "status": "ok",
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "answer": "Timetable feature is not available right now (timetable.json missing on server).",
+                "sources": [],
+            }
+
+        # Timetable is loaded but teacher/section not found
+        known = ", ".join(tt.teacher_names[:12])
+        more = "..." if len(tt.teacher_names) > 12 else ""
+        return {
+            "status": "ok",
+            "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+            "answer": (
+                "I couldn’t find that teacher/section in the uploaded timetable.\n\n"
+                f"Teachers available in this timetable: {known}{more}\n\n"
+                "Tip: use the exact name from timetable (e.g., 'Dr Uzma Afzal')."
+            ),
+            "sources": [tt._source()],
+        }
 
     rag = get_rag()
     if not rag:
