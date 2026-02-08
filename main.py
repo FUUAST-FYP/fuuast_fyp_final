@@ -10,6 +10,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
+from timetable_engine import TimetableEngine
 
 from rag_logic import RAGPipeline
 
@@ -54,6 +55,10 @@ GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+
+class ChatTurn(BaseModel):
+    role: str  # "user" | "assistant"
+    text: str
 
 if genai and GEMINI_API_KEY:
     try:
@@ -139,12 +144,62 @@ def get_rag() -> Optional[RAGPipeline]:
     return None
 
 # ---------------------------
-# Request model
+# Lazy-loaded Timetable (IMPORTANT for Vercel)
+# ---------------------------
+_tt: Optional[TimetableEngine] = None
+_tt_error: Optional[str] = None
+_tt_path_used: Optional[str] = None
+
+def _resolve_timetable_path() -> Optional[str]:
+    """Try multiple candidate paths to find the timetable JSON file."""
+    cwd = os.getcwd()
+    try:
+        base_dir = Path(__file__).resolve().parent
+    except Exception:
+        base_dir = Path(cwd)
+
+    candidates = [
+        os.path.join(cwd, "data", "timetable.json"),
+        str(base_dir / "data" / "timetable.json"),
+    ]
+    for p in candidates:
+        try:
+            if p and os.path.isfile(p) and os.path.getsize(p) > 50:
+                logger.info(f"Successfully resolved timetable path: {p}")
+                return str(Path(p).resolve())
+        except Exception:
+            pass
+    return None
+
+def get_timetable() -> Optional[TimetableEngine]:
+    """Initialize timetable engine only when needed."""
+    global _tt, _tt_error, _tt_path_used
+    if _tt is not None:
+        return _tt
+    p = _resolve_timetable_path()
+    if not p:
+        _tt_error = "Timetable JSON not found (data/timetable.json missing)."
+        logger.error(_tt_error)
+        return None
+    try:
+        _tt = TimetableEngine(p)
+        _tt_path_used = p
+        _tt_error = None
+        return _tt
+    except Exception as e:
+        _tt_error = f"Failed to load timetable: {e}"
+        logger.exception(_tt_error)
+        return None
+
+
+# ---------------------------
+# Request Models
 # ---------------------------
 class ChatRequest(BaseModel):
     message: str
     session_id: str = "guest_session"
     top_k: int = 3
+    history: Optional[List[ChatTurn]] = None
 
 
 # ---------------------------
@@ -325,6 +380,21 @@ def chat(req: ChatRequest):
             "answer": smalltalk,
             "sources": [],
         }
+
+    # Try timetable engine first (for schedule/class queries)
+    tt = get_timetable()
+    if tt:
+        hist = None
+        if req.history:
+            hist = [{"role": h.role, "text": h.text} for h in req.history][-12:]
+        out = tt.answer(msg, history=hist)
+        if out:
+            return {
+                "status": "ok",
+                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "answer": out["answer"],
+                "sources": out.get("sources", []),
+            }
 
     rag = get_rag()
     if not rag:

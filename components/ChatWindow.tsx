@@ -26,7 +26,14 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
 
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [sessionId] = useState<string>(() => makeSessionId());
+  const [sessionId] = useState<string>(() => {
+    const key = "unibot_session_id";
+    const existing = localStorage.getItem(key);
+    if (existing) return existing;
+    const id = makeSessionId();
+    localStorage.setItem(key, id);
+    return id;
+  });
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -51,7 +58,12 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ isOpen, onClose }) => {
     setIsLoading(true);
 
     try {
-      const res = await sendChat(trimmed, sessionId);
+      const history = [...messages, userMessage]
+        .filter((m) => m.id !== "welcome")
+        .slice(-12)
+        .map((m) => ({ role: m.role, text: m.text }));
+
+      const res = await sendChat(trimmed, sessionId, history);
 
       const botMessage: Message = {
         id: (Date.now() + 1).toString(),
