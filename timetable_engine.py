@@ -52,14 +52,24 @@ def _extract_section(text: str) -> Optional[str]:
     return s
 
 def _extract_teacher_candidate(text: str) -> Optional[str]:
-    # Try to grab something like "Dr Kashif", "Mr A", "Ms Naheed"
+    # supports: Dr, Mr, Ms, Mrs, Miss, Prof, Sir, Madam
     t = re.sub(r"\s+", " ", (text or "")).strip()
-    m = re.search(r"\b(Dr|Mr|Ms|Mrs)\.?\s+[A-Za-z][A-Za-z\s]{0,40}", t)
+
+    # Title + name (up to 4 words)
+    m = re.search(r"\b(Dr|Mr|Ms|Mrs|Miss|Prof|Sir|Madam)\.?\s+([A-Za-z]+(?:\s+[A-Za-z]+){0,3})\b", t, re.IGNORECASE)
     if m:
-        cand = m.group(0).strip()
-        cand = cand.replace(".", "")
-        return cand
+        title = m.group(1)
+        name = m.group(2)
+        cand = f"{title} {name}".replace(".", "")
+        return cand.strip()
+
+    # If user says "timetable of X" or "schedule of X"
+    m2 = re.search(r"\b(timetable|schedule)\s+of\s+([A-Za-z]+(?:\s+[A-Za-z]+){0,3})\b", t, re.IGNORECASE)
+    if m2:
+        return m2.group(2).strip()
+
     return None
+
 
 @dataclass
 class TTEntry:
@@ -115,24 +125,47 @@ class TimetableEngine:
             self.slots_by_day.setdefault(x.day, set()).add(x.start)
         self.slots_by_day = {d: sorted(list(v)) for d, v in self.slots_by_day.items()}
 
+    HONORIFICS = {"dr", "mr", "ms", "mrs", "miss", "prof", "sir", "madam"}
+
+    @staticmethod
+    def _strip_honorifics(s: str) -> str:
+        parts = _norm(s).split()
+        parts = [p for p in parts if p not in TimetableEngine.HONORIFICS]
+        return " ".join(parts).strip()
+
+    @staticmethod
+    def _tokens(s: str) -> set[str]:
+        return set(TimetableEngine._strip_honorifics(s).split())
+
     def _best_match_teacher(self, query: str) -> Optional[str]:
         cand = _extract_teacher_candidate(query)
-        q = _norm(cand or query)
+        q_raw = cand or query
+        q_clean = self._strip_honorifics(q_raw)
 
-        # quick exact-ish token match
+        q_tokens = self._tokens(q_raw)
+        if not q_clean or len(q_tokens) == 0:
+            return None
+
+        # Only consider teachers that share at least 1 real name token
+        candidates = []
         for t in self.teacher_names:
-            if _norm(t) in q or q in _norm(t):
-                return t
+            t_tokens = self._tokens(t)
+            if q_tokens & t_tokens:
+                candidates.append(t)
 
-        # fuzzy
+        if not candidates:
+            return None
+
+        # Fuzzy match only among the safe candidates
         best = None
         best_score = 0.0
-        for t in self.teacher_names:
-            score = difflib.SequenceMatcher(None, q, _norm(t)).ratio()
+        for t in candidates:
+            score = difflib.SequenceMatcher(None, q_clean, self._strip_honorifics(t)).ratio()
             if score > best_score:
                 best_score = score
                 best = t
-        return best if best_score >= 0.55 else None
+
+        return best if best_score >= 0.65 else None
 
     def _teacher_from_history(self, history: Optional[List[Dict[str, str]]]) -> Optional[str]:
         if not history:
@@ -160,6 +193,17 @@ class TimetableEngine:
         teacher = self._best_match_teacher(msg)
         if not teacher and is_avail:
             teacher = self._teacher_from_history(history)
+
+        timetable_intent = is_avail or is_sched or ("timetable" in low) or ("schedule" in low)
+
+        if timetable_intent and not teacher and not section:
+            return {
+                "answer": (
+                    "I couldn't find that teacher name in the timetable.\n"
+                    "Try the full name as written in the timetable (e.g., 'Dr FirstName LastName')."
+                ),
+                "sources": [self._source()],
+            }
 
         # 1) Teacher availability
         if teacher and (is_avail or is_sched):
