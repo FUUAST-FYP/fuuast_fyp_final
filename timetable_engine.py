@@ -55,18 +55,32 @@ def _extract_teacher_candidate(text: str) -> Optional[str]:
     # supports: Dr, Mr, Ms, Mrs, Miss, Prof, Sir, Madam
     t = re.sub(r"\s+", " ", (text or "")).strip()
 
-    # Title + name (up to 4 words)
-    m = re.search(r"\b(Dr|Mr|Ms|Mrs|Miss|Prof|Sir|Madam)\.?\s+([A-Za-z]+(?:\s+[A-Za-z]+){0,3})\b", t, re.IGNORECASE)
-    if m:
-        title = m.group(1)
-        name = m.group(2)
-        cand = f"{title} {name}".replace(".", "")
-        return cand.strip()
+    STOP_AFTER = {"on", "at", "in", "from", "to", "for", "of", "by", "with"}
+    DAY_WORDS = set(DAY_ALIASES.keys()) | {v.lower() for v in DAY_ALIASES.values()}
 
-    # If user says "timetable of X" or "schedule of X"
-    m2 = re.search(r"\b(timetable|schedule)\s+of\s+([A-Za-z]+(?:\s+[A-Za-z]+){0,3})\b", t, re.IGNORECASE)
+    def _trim(name: str) -> str:
+        words = name.strip().split()
+        cleaned = []
+        for w in words:
+            wl = w.lower().strip(".,")
+            if wl in STOP_AFTER or wl in DAY_WORDS:
+                break
+            cleaned.append(w)
+        return " ".join(cleaned).strip()
+
+    m = re.search(
+        r"\b(Dr|Mr|Ms|Mrs|Miss|Prof|Sir|Madam)\.?\s+([A-Za-z]+(?:\s+[A-Za-z]+){0,4})\b",
+        t, re.IGNORECASE
+    )
+    if m:
+        title = m.group(1).replace(".", "")
+        name = _trim(m.group(2))
+        cand = f"{title} {name}".strip()
+        return cand if len(name) >= 2 else cand  # keep even single-name
+
+    m2 = re.search(r"\b(timetable|schedule)\s+of\s+([A-Za-z]+(?:\s+[A-Za-z]+){0,4})\b", t, re.IGNORECASE)
     if m2:
-        return m2.group(2).strip()
+        return _trim(m2.group(2))
 
     return None
 
@@ -126,6 +140,12 @@ class TimetableEngine:
         self.slots_by_day = {d: sorted(v) for d, v in self.slots_by_day.items()}  # type: ignore[assignment]
 
     HONORIFICS = {"dr", "mr", "ms", "mrs", "miss", "prof", "sir", "madam"}
+    STOPWORDS = {
+        "on","at","in","from","to","for","of","by","with",
+        "availability","available","free","busy","schedule","timetable","routine","classes","class","lecture",
+    }
+
+
 
     @staticmethod
     def _strip_honorifics(s: str) -> str:
@@ -135,37 +155,61 @@ class TimetableEngine:
 
     @staticmethod
     def _tokens(s: str) -> set[str]:
-        return set(TimetableEngine._strip_honorifics(s).split())
+        day_words = set(DAY_ALIASES.keys()) | {v.lower() for v in DAY_ALIASES.values()}
+        toks = TimetableEngine._strip_honorifics(s).split()
+        toks = [t for t in toks if t not in TimetableEngine.STOPWORDS and t not in day_words]
+        return set(toks)
+
 
     def _best_match_teacher(self, query: str) -> Optional[str]:
         cand = _extract_teacher_candidate(query)
         q_raw = cand or query
-        q_clean = self._strip_honorifics(q_raw)
 
-        q_tokens = self._tokens(q_raw)
-        if not q_clean or len(q_tokens) == 0:
+        q_tokens = list(self._tokens(q_raw))
+        if not q_tokens:
             return None
 
-        # Only consider teachers that share at least 1 real name token
-        candidates = []
+        # 1) normal safe matching: token overlap
+        overlap_candidates = []
         for t in self.teacher_names:
             t_tokens = self._tokens(t)
-            if q_tokens & t_tokens:
-                candidates.append(t)
+            if set(q_tokens) & t_tokens:
+                overlap_candidates.append(t)
 
-        if not candidates:
-            return None
+        def best_by_full_ratio(cands: List[str]) -> Tuple[Optional[str], float]:
+            best = None
+            best_score = 0.0
+            q_str = " ".join(q_tokens)
+            for t in cands:
+                t_str = " ".join(self._tokens(t))
+                score = difflib.SequenceMatcher(None, q_str, t_str).ratio()
+                if score > best_score:
+                    best_score = score
+                    best = t
+            return best, best_score
 
-        # Fuzzy match only among the safe candidates
+        if overlap_candidates:
+            best, score = best_by_full_ratio(overlap_candidates)
+            return best if best and score >= 0.65 else None
+
+        # 2) fallback: near-token match (handles OCR typos like sarim vs sarlm)
         best = None
-        best_score = 0.0
-        for t in candidates:
-            score = difflib.SequenceMatcher(None, q_clean, self._strip_honorifics(t)).ratio()
-            if score > best_score:
-                best_score = score
-                best = t
+        best_tok_score = 0.0
+        for t in self.teacher_names:
+            t_tokens = list(self._tokens(t))
+            if not t_tokens:
+                continue
+            for qt in q_tokens:
+                if len(qt) < 4:
+                    continue
+                for tt in t_tokens:
+                    tok_score = difflib.SequenceMatcher(None, qt, tt).ratio()
+                    if tok_score > best_tok_score:
+                        best_tok_score = tok_score
+                        best = t
 
-        return best if best_score >= 0.65 else None
+        # High threshold to avoid wrong teacher guesses
+        return best if best and best_tok_score >= 0.85 else None
 
     def _teacher_from_history(self, history: Optional[List[Dict[str, str]]]) -> Optional[str]:
         if not history:
