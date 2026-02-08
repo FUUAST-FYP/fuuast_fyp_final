@@ -120,10 +120,10 @@ class TimetableEngine:
             for d in self.by_section[s]:
                 self.by_section[s][d].sort(key=lambda z: z.start)
 
-        self.slots_by_day: Dict[str, List[str]] = {}
+        self.slots_by_day: Dict[str, set[str]] = {}
         for x in self.entries:
             self.slots_by_day.setdefault(x.day, set()).add(x.start)
-        self.slots_by_day = {d: sorted(list(v)) for d, v in self.slots_by_day.items()}
+        self.slots_by_day = {d: sorted(v) for d, v in self.slots_by_day.items()}  # type: ignore[assignment]
 
     HONORIFICS = {"dr", "mr", "ms", "mrs", "miss", "prof", "sir", "madam"}
 
@@ -180,32 +180,68 @@ class TimetableEngine:
 
     def answer(self, message: str, history: Optional[List[Dict[str, str]]] = None) -> Optional[Dict[str, Any]]:
         msg = message or ""
+        low = _norm(msg)
+
         day = _extract_day(msg)
         time = _extract_time(msg)
         section = _extract_section(msg)
 
-        # Determine intent keywords
-        low = _norm(msg)
+        # Intent keywords
         is_avail = any(k in low for k in ["available", "availability", "free", "busy", "khali", "class", "lecture"])
-        is_sched = any(k in low for k in ["timetable", "schedule", "classes", "routine"])
+        is_sched = any(k in low for k in ["timetable", "time table", "schedule", "classes", "routine"])
         is_room = "room" in low or "lab" in low
 
+        # Did user explicitly mention a teacher name in THIS message?
+        teacher_candidate = _extract_teacher_candidate(msg)  # e.g., "Miss Shazia", "Dr Uzma Afzal"
+
+        # First try direct match (safe matching)
         teacher = self._best_match_teacher(msg)
-        if not teacher and is_avail:
-            teacher = self._teacher_from_history(history)
 
-        timetable_intent = is_avail or is_sched or ("timetable" in low) or ("schedule" in low)
+        # ✅ NEW: Day/time-only follow-up handling (e.g., user replies "Monday" or "mon" after bot asked day)
+        # If user message contains ONLY day/time (no intent words, no teacher, no section), treat it as follow-up.
+        followup_day_time_only = (
+            (day or time) and
+            not teacher_candidate and
+            not section and
+            not (is_avail or is_sched or is_room) and
+            len(low.split()) <= 3
+        )
+        if followup_day_time_only:
+            t_hist = self._teacher_from_history(history)
+            if t_hist:
+                teacher = t_hist
+                is_avail = True  # force timetable availability flow
 
-        if timetable_intent and not teacher and not section:
+        timetable_intent = is_avail or is_sched or is_room or ("timetable" in low) or ("schedule" in low)
+
+        # ✅ NEW: If user mentioned a teacher, but that teacher is NOT in timetable, DO NOT use history fallback.
+        if timetable_intent and teacher_candidate and not teacher:
+            known = ", ".join(self.teacher_names[:12])
+            more = "..." if len(self.teacher_names) > 12 else ""
             return {
                 "answer": (
-                    "I couldn't find that teacher name in the timetable.\n"
-                    "Try the full name as written in the timetable (e.g., 'Dr FirstName LastName')."
+                    f"I couldn’t find **{teacher_candidate}** in the uploaded timetable.\n\n"
+                    f"Available teachers in this timetable include: {known}{more}\n\n"
+                    "Tip: use the exact name as written in timetable.json (e.g., 'Dr Uzma Afzal')."
                 ),
                 "sources": [self._source()],
             }
 
-        # 1) Teacher availability
+        # ✅ Only use history teacher if user did NOT mention a teacher in current message
+        if not teacher and is_avail and not teacher_candidate:
+            teacher = self._teacher_from_history(history)
+
+        # If timetable intent exists but still no teacher/section
+        if timetable_intent and not teacher and not section:
+            return {
+                "answer": (
+                    "I couldn't detect a teacher or section for timetable.\n"
+                    "Try: 'Is Dr Uzma Afzal free on Monday?' or 'BS1A timetable Monday'."
+                ),
+                "sources": [self._source()],
+            }
+
+        # 1) Teacher availability / schedule
         if teacher and (is_avail or is_sched):
             if not day:
                 return {
@@ -218,7 +254,6 @@ class TimetableEngine:
 
             classes = self.by_teacher.get(teacher, {}).get(day, [])
             if time:
-                # check if teacher has a class starting at that time
                 hit = next((c for c in classes if c.start == time), None)
                 if hit:
                     return {
@@ -234,7 +269,6 @@ class TimetableEngine:
                         "sources": [self._source()],
                     }
 
-            # no time: show schedule + free slots
             busy_slots = {c.start for c in classes}
             all_slots = self.slots_by_day.get(day, [])
             free_slots = [s for s in all_slots if s not in busy_slots]
@@ -249,6 +283,7 @@ class TimetableEngine:
             if free_slots:
                 lines.append("\nFree slots:")
                 lines.append(" - " + ", ".join(free_slots))
+
             return {"answer": "\n".join(lines), "sources": [self._source()]}
 
         # 2) Section schedule / room query
@@ -265,7 +300,6 @@ class TimetableEngine:
                         lines.append(f"- {c.start}–{c.end}: {c.course or '—'} ({c.teacher or '—'}) | Room {c.room or '—'}")
                 return {"answer": "\n".join(lines), "sources": [self._source()]}
 
-            # no day: week summary
             days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
             lines = [f"{section} weekly timetable summary:"]
             for d in days:
@@ -277,8 +311,8 @@ class TimetableEngine:
                     lines.append(f"- {c.start}–{c.end}: {c.course or '—'} ({c.teacher or '—'}) | {c.room or '—'}")
             return {"answer": "\n".join(lines), "sources": [self._source()]}
 
-        # Not a timetable-related question
         return None
+
 
     def _source(self) -> Dict[str, Any]:
         src = self.meta.get("source_file", "Timetable")
