@@ -12,3 +12,4 @@ kb/snapshots
 # DO deploy the KB used at runtime
 !kb/kb_current.jsonl
 !knowledge_base.json
+data/timetable.xlsx
