@@ -3,6 +3,7 @@ import os
 import time
 import uuid
 import html as _html
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -224,6 +225,21 @@ def _is_smalltalk(msg: str) -> Optional[str]:
         return "You're welcome."
     return None
 
+# ---------------------------
+# Timetable Intent Detection
+# ---------------------------
+TT_SECTION_RE = re.compile(r"\bBS\s*\d+\s*[A-Z]\b", re.I)
+TT_TIME_RE = re.compile(r"\b\d{1,2}[:\.]\d{2}\b")
+TT_DAY_RE = re.compile(r"\b(monday|tuesday|wednesday|thursday|friday|saturday|sunday|mon|tue|wed|thu|fri|sat|sun)\b", re.I)
+
+TT_INTENT_WORDS = ("timetable", "time table", "schedule", "class", "lecture", "slot", "timing", "available", "availability", "free", "room")
+TT_TEACHER_WORDS = ("teacher", "instructor", "sir", "mam", "madam", "dr", "mr", "ms", "prof")
+
+def looks_like_timetable(msg_low: str) -> bool:
+    """Check if message is likely a timetable query: has intent + entity (section or teacher reference)."""
+    has_intent = any(w in msg_low for w in TT_INTENT_WORDS) or bool(TT_TIME_RE.search(msg_low)) or bool(TT_DAY_RE.search(msg_low))
+    has_entity = bool(TT_SECTION_RE.search(msg_low)) or any(w in msg_low for w in TT_TEACHER_WORDS)
+    return has_intent and has_entity
 
 def _build_sources(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     sources: List[Dict[str, Any]] = []
@@ -239,8 +255,7 @@ def _build_sources(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             label = f"{label} (p.{page})"
         label = _html.unescape(label).replace("â€“", "–").replace("â€”", "—")
 
-        # ✅ Prefer URL-based dedupe when URL exists
-        key = ("url", url) if url else ("doc", doc_name, page)
+                key = ("url", url) if url else ("doc", doc_name, page)
 
         if key in seen:
             continue
@@ -298,7 +313,8 @@ def _answer_with_llm(question: str, docs: List[Dict[str, Any]]) -> str:
         try:
             return groq_chat_completion(question, context_text, sources_text)
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"LLM error (Groq): {e}") from e
+            logger.exception(f"Groq LLM failed, falling back to extractive answer: {e}")
+            return chunks[0] if chunks else "Information not available."
 
     # 2) Gemini
     if genai and GEMINI_API_KEY:
@@ -306,6 +322,7 @@ def _answer_with_llm(question: str, docs: List[Dict[str, Any]]) -> str:
 Rules:
 - Answer in 1-3 short sentences.
 - Use ONLY the context below. Do not invent facts.
+- If sources conflict, say that clearly and mention both.
 - If the context is insufficient, say you don't have that information.
 Context:
 {context_text}
@@ -317,7 +334,8 @@ Answer:"""
             resp = model.generate_content(prompt)
             return (resp.text or "").strip()
         except Exception as e:
-            raise HTTPException(status_code=500, detail=f"LLM error (Gemini): {e}") from e
+            logger.exception(f"Gemini LLM failed, falling back to extractive answer: {e}")
+            return chunks[0] if chunks else "Information not available."
 
     # 3) No LLM configured: return top chunk
     return chunks[0] if chunks else "Information not available."
@@ -371,6 +389,10 @@ def chat(req: ChatRequest):
     if not msg:
         raise HTTPException(status_code=400, detail="message is required")
 
+    # Basic abuse guard
+    if len(msg) > 1200:
+        raise HTTPException(status_code=413, detail="message too long")
+
     # Small talk -> no RAG, no sources
     smalltalk = _is_smalltalk(msg)
     if smalltalk:
@@ -381,31 +403,24 @@ def chat(req: ChatRequest):
             "sources": [],
         }
 
-    # Try timetable engine first (for schedule/class queries)
-    tt = get_timetable()
-    if tt:
-        hist = None
-        if req.history:
-            hist = [{"role": h.role, "text": h.text} for h in req.history][-12:]
-        out = tt.answer(msg, history=hist)
-        if out:
-            return {
-                "status": "ok",
-                "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-                "answer": out["answer"],
-                "sources": out.get("sources", []),
-            }
+    # Try timetable engine only if message looks like a timetable query
+    msg_low = msg.lower()
+    if looks_like_timetable(msg_low):
+        tt = get_timetable()
+        if tt:
+            hist = None
+            if req.history:
+                hist = [{"role": h.role, "text": h.text} for h in req.history][-12:]
+            out = tt.answer(msg, history=hist)
+            if out:
+                return {
+                    "status": "ok",
+                    "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                    "answer": out["answer"],
+                    "sources": out.get("sources", []),
+                }
         
-        # If it looks like a timetable/availability question but timetable engine couldn't answer,
-    # do NOT fall back to website RAG (prevents "I don't have that information").
-    tt_keywords = [
-        "timetable", "time table", "schedule", "routine",
-        "free", "available", "availability", "busy", "khali",
-        "room", "lab", "section", "bs"
-    ]
-    is_tt_query = any(k in msg.lower() for k in tt_keywords)
-
-    if is_tt_query:
+        # Timetable query but no answer from timetable engine
         if not tt:
             return {
                 "status": "ok",

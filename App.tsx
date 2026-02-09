@@ -12,6 +12,26 @@ const App: React.FC = () => {
     };
   }, [isChatOpen]);
 
+  // Smooth scroll to section
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
+  // Open chat and scroll to it
+  const openChatScrolled = () => {
+    setIsChatOpen(true);
+    // Scroll to chat after a brief delay to ensure it's rendered
+    setTimeout(() => {
+      const chatElement = document.getElementById("try-now");
+      if (chatElement) {
+        chatElement.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 100);
+  };
+
   const features = [
     {
       title: "Verified Information",
@@ -49,26 +69,30 @@ const App: React.FC = () => {
         </div>
 
         <div className="hidden lg:flex items-center gap-10 text-sm font-semibold text-slate-600">
-          <a className="hover:text-[var(--brand-700)] transition-colors" href="#">
-            Admissions
-          </a>
-          <a className="hover:text-[var(--brand-700)] transition-colors" href="#">
-            Faculties
-          </a>
-          <a className="hover:text-[var(--brand-700)] transition-colors" href="#">
-            Examinations
-          </a>
-          <a className="hover:text-[var(--brand-700)] transition-colors" href="#">
-            Campus Life
-          </a>
-          <button className="bg-[var(--brand-700)] text-white px-7 py-2.5 rounded-full font-bold hover:bg-[var(--brand-800)] transition-all shadow-md hover:shadow-xl active:scale-95">
-            Apply Now
+          <button onClick={() => scrollToSection("features")} className="hover:text-[var(--brand-700)] transition-colors bg-none border-none cursor-pointer"
+          >
+            Features
+          </button>
+          <button onClick={() => scrollToSection("how-it-works")} className="hover:text-[var(--brand-700)] transition-colors bg-none border-none cursor-pointer"
+          >
+            How it Works
+          </button>
+          <button onClick={() => scrollToSection("faq")} className="hover:text-[var(--brand-700)] transition-colors bg-none border-none cursor-pointer"
+          >
+            FAQ
+          </button>
+          <button onClick={() => scrollToSection("contact")} className="hover:text-[var(--brand-700)] transition-colors bg-none border-none cursor-pointer"
+          >
+            Contact
+          </button>
+          <button onClick={() => openChatScrolled()} className="bg-[var(--brand-700)] text-white px-7 py-2.5 rounded-full font-bold hover:bg-[var(--brand-800)] transition-all shadow-md hover:shadow-xl active:scale-95">
+            Try Now
           </button>
         </div>
 
         {/* Mobile CTA */}
         <button
-          onClick={() => setIsChatOpen(true)}
+          onClick={() => openChatScrolled()}
           className="lg:hidden bg-[var(--brand-700)] text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-[var(--brand-800)] active:scale-95 transition-all"
         >
           Open UniBot
@@ -136,14 +160,14 @@ const App: React.FC = () => {
 
               <div className="mt-9 flex flex-col sm:flex-row gap-4">
                 <button
-                  onClick={() => setIsChatOpen(true)}
+                  onClick={() => openChatScrolled()}
                   className="bg-[var(--brand-700)] text-white px-8 py-4 rounded-2xl font-black hover:bg-[var(--brand-800)] transition-all shadow-2xl shadow-black/25 active:scale-95"
                 >
                   <i className="fas fa-robot mr-2" />
                   Try UniBot
                 </button>
 
-                <button className="bg-white/10 border border-white/20 text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/15 transition-all active:scale-95">
+                <button onClick={() => scrollToSection("how-it-works")} className="bg-white/10 border border-white/20 text-white px-8 py-4 rounded-2xl font-bold hover:bg-white/15 transition-all active:scale-95">
                   <i className="fas fa-circle-info mr-2" />
                   How it works
                 </button>
@@ -151,7 +175,7 @@ const App: React.FC = () => {
             </div>
 
             {/* Right: 01/02/03 Feature Cards */}
-            <div className="grid gap-5">
+            <div id="features" className="grid gap-5">
               {features.map((f, idx) => {
                 const num = String(idx + 1).padStart(2, "0");
                 return (
@@ -194,6 +218,80 @@ const App: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="max-w-7xl mx-auto px-4 sm:px-8 py-20 sm:py-28">
+        <div className="text-center mb-14">
+          <h2 className="text-3xl sm:text-4xl font-black text-slate-900">How UniBot Works</h2>
+          <p className="mt-4 text-slate-600 max-w-2xl mx-auto text-lg">
+            Three simple steps to get verified answers about FUUAST in seconds
+          </p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          {[
+            { step: "1", title: "Ask", desc: "Type your question naturally — admissions, timetables, fees, or any FUUAST topic." },
+            { step: "2", title: "Search", desc: "UniBot searches verified FUUAST documents using RAG technology." },
+            { step: "3", title: "Answer", desc: "Get sources cited for every response. Click links for official pages." }
+          ].map((item) => (
+            <div key={item.step} className="bg-white rounded-2xl p-8 border border-slate-200 shadow-md hover:shadow-lg transition-all">
+              <div className="w-12 h-12 rounded-full bg-[var(--brand-700)] text-white flex items-center justify-center font-black text-lg mb-4">
+                {item.step}
+              </div>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">{item.title}</h3>
+              <p className="text-slate-600 leading-relaxed">{item.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Features Showcase Section */}
+      <section id="faq" className="bg-slate-900 text-white py-20 sm:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8">
+          <div className="text-center mb-14">
+            <h2 className="text-3xl sm:text-4xl font-black">FAQ</h2>
+            <p className="mt-4 text-slate-300 max-w-2xl mx-auto text-lg">
+              Common questions about UniBot
+            </p>
+          </div>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {[
+              { q: "Is UniBot always accurate?", a: "UniBot only answers from verified FUUAST sources. If info isn't in documents, it says so." },
+              { q: "Does it work for admissions queries?", a: "Yes! Ask about programs, fee structures, merit requirements, deadlines — all from official docs." },
+              { q: "Can it check teacher schedules?", a: "Yes! Ask 'Is Dr Uzma free Monday?' or 'BS1A Friday timetable' for instant results." },
+              { q: "Is my data safe?", a: "UniBot doesn't store personal data. Conversation history is session-based only." }
+            ].map((item, idx) => (
+              <div key={idx} className="bg-white/10 border border-white/20 rounded-2xl p-6">
+                <h3 className="font-bold text-lg mb-2">{item.q}</h3>
+                <p className="text-slate-300 text-sm leading-relaxed">{item.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section id="contact" className="max-w-7xl mx-auto px-4 sm:px-8 py-20 sm:py-28">
+        <div className="bg-gradient-to-br from-[var(--brand-700)] to-[var(--brand-800)] rounded-3xl p-10 sm:p-16 text-white text-center">
+          <h2 className="text-3xl sm:text-4xl font-black mb-4">Ready to Get Started?</h2>
+          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+            Open UniBot below and ask your first question. Get verified answers about FUUAST in seconds.
+          </p>
+          <button
+            onClick={() => openChatScrolled()}
+            className="bg-white text-[var(--brand-700)] px-10 py-4 rounded-full font-bold text-lg hover:bg-slate-100 transition-all shadow-xl active:scale-95"
+          >
+            <i className="fas fa-robot mr-2" />
+            Try UniBot Now
+          </button>
+        </div>
+      </section>
+
+      {/* Chat Widget Section */}
+      <section id="try-now" className="max-w-7xl mx-auto px-4 sm:px-8 py-12">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">Start Chatting with UniBot</h2>
         </div>
       </section>
 

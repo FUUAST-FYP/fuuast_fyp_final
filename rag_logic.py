@@ -191,6 +191,29 @@ class RAGPipeline:
             return 0.08
         return 0.0
 
+    def _is_fee_query(self, query: str) -> bool:
+        """Check if query is fee/cost related."""
+        fee_words = ("fee", "tuition", "semester", "admission fee", "cost", "price", "structure", "charges")
+        q_low = (query or "").lower()
+        return any(word in q_low for word in fee_words)
+
+    def _fee_bonus(self, doc: Dict[str, Any], is_fee_query: bool) -> float:
+        """Add bonus if doc is PDF or has 'Fee Structure' in title, and query is fee-related."""
+        if not is_fee_query:
+            return 0.0
+
+        source = (doc.get("sourceDocument") or "").lower()
+        content = (doc.get("content") or "").lower()
+        title = (doc.get("title") or "").lower()
+
+        # Boost PDFs or Fee Structure pages
+        is_pdf = (doc.get("source_type") == "pdf") or source.endswith(".pdf") or ("pdf" in source)
+        has_fee_title = "fee structure" in title or "fee structure" in source
+
+        if is_pdf or has_fee_title:
+            return 0.25  # Significant boost for fee-relevant sources
+        return 0.0
+
     def search(self, query: str, top_k: int = 3) -> List[Dict[str, Any]]:
         self._maybe_reload()
 
@@ -201,27 +224,45 @@ class RAGPipeline:
         if not q_terms:
             return []
 
+        # Detect fee-related queries for domain-aware ranking
+        is_fee_query = self._is_fee_query(query)
+
         scores: List[Tuple[float, int]] = []
         for i, doc in enumerate(self.knowledge_base):
             base = self._bm25_score(i, q_terms)
-            s = base + self._recency_bonus(doc)
+            s = base + self._recency_bonus(doc) + self._fee_bonus(doc, is_fee_query)
             scores.append((s, i))
 
         scores.sort(reverse=True, key=lambda x: x[0])
-        top = scores[: max(1, min(top_k, 10))]
+        top = scores[: max(1, min(top_k * 2, 20))]  # Get 2x top_k to account for diversity filtering
         if not top:
             return []
 
         max_score = top[0][0] if top[0][0] > 0 else 1.0
         threshold = 0.10
 
+        # Collect results with diversity constraint (max 2 chunks per source)
         results: List[Dict[str, Any]] = []
+        source_counts: Dict[str, int] = {}
+
         for s, i in top:
             conf = float(s / max_score) if max_score else 0.0
             if conf < threshold:
                 continue
+
             doc = dict(self.knowledge_base[i])
+            source_key = doc.get("url") or doc.get("sourceDocument") or "unknown"
+
+            # Skip if we already have 2 chunks from this source
+            if source_counts.get(source_key, 0) >= 2:
+                continue
+
+            source_counts[source_key] = source_counts.get(source_key, 0) + 1
             doc["confidence_score"] = conf
             results.append(doc)
+
+            # Stop once we have enough diverse results
+            if len(results) >= top_k:
+                break
 
         return results

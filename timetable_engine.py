@@ -241,7 +241,7 @@ class TimetableEngine:
         # First try direct match (safe matching)
         teacher = self._best_match_teacher(msg)
 
-        # ✅ NEW: Day/time-only follow-up handling (e.g., user replies "Monday" or "mon" after bot asked day)
+        #  NEW: Day/time-only follow-up handling (e.g., user replies "Monday" or "mon" after bot asked day)
         # If user message contains ONLY day/time (no intent words, no teacher, no section), treat it as follow-up.
         followup_day_time_only = (
             (day or time) and
@@ -258,7 +258,7 @@ class TimetableEngine:
 
         timetable_intent = is_avail or is_sched or is_room or ("timetable" in low) or ("schedule" in low)
 
-        # ✅ NEW: If user mentioned a teacher, but that teacher is NOT in timetable, DO NOT use history fallback.
+        #  NEW: If user mentioned a teacher, but that teacher is NOT in timetable, DO NOT use history fallback.
         if timetable_intent and teacher_candidate and not teacher:
             known = ", ".join(self.teacher_names[:12])
             more = "..." if len(self.teacher_names) > 12 else ""
@@ -271,7 +271,7 @@ class TimetableEngine:
                 "sources": [self._source()],
             }
 
-        # ✅ Only use history teacher if user did NOT mention a teacher in current message
+        #  Only use history teacher if user did NOT mention a teacher in current message
         if not teacher and is_avail and not teacher_candidate:
             teacher = self._teacher_from_history(history)
 
