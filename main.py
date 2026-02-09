@@ -255,7 +255,7 @@ def _build_sources(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             label = f"{label} (p.{page})"
         label = _html.unescape(label).replace("â€“", "–").replace("â€”", "—")
 
-                key = ("url", url) if url else ("doc", doc_name, page)
+        key = ("url", url) if url else ("doc", doc_name, page)
 
         if key in seen:
             continue
