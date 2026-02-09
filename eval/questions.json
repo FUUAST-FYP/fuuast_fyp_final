@@ -1,0 +1,250 @@
+[
+  {
+    "id": "Q01",
+    "question": "What is the official link for the bachelors morning fee structure page?",
+    "expected_source_contains": [
+      "morning-fee-structure",
+      "fee-structure-bachelors-programmes-morning"
+    ],
+    "notes": "Should cite an official fuuast.edu.pk fee structure URL."
+  },
+  {
+    "id": "Q02",
+    "question": "Show the warning/advice in Admission Morning about agents and fake information.",
+    "expected_source_contains": [
+      "admission-morning"
+    ],
+    "notes": "Admissions page; should quote/paraphrase and cite the page."
+  },
+  {
+    "id": "Q03",
+    "question": "Give me FUUAST main contact details (email/phone) with the official source link.",
+    "expected_source_contains": [
+      "contact"
+    ],
+    "notes": "Contact page."
+  },
+  {
+    "id": "Q04",
+    "question": "Where can I find the Examination Office contact details? Provide the official link.",
+    "expected_source_contains": [
+      "contact-detail-of-examination-office",
+      "examination-office"
+    ],
+    "notes": "Exam office contacts."
+  },
+  {
+    "id": "Q05",
+    "question": "List undergraduate programs page link and brief description from the official source.",
+    "expected_source_contains": [
+      "under-graduate-program",
+      "undergraduate"
+    ],
+    "notes": "UG programs page."
+  },
+  {
+    "id": "Q06",
+    "question": "What does the university organization page say about the university leadership? Provide the official link.",
+    "expected_source_contains": [
+      "university-organization"
+    ],
+    "notes": "Org/leadership page."
+  },
+  {
+    "id": "Q07",
+    "question": "What is the fee structure for BSCS morning? Give the official page link.",
+    "expected_source_contains": [
+      "fee-structure-bachelors-programmes-morning",
+      "morning-fee-structure"
+    ],
+    "notes": "Should retrieve the fee structure page even if it doesn't compute totals."
+  },
+  {
+    "id": "Q08",
+    "question": "Where can I find admission information for morning programs? Provide the official source link.",
+    "expected_source_contains": [
+      "admission-morning"
+    ],
+    "notes": "Admissions morning page."
+  },
+  {
+    "id": "Q09",
+    "question": "What is FUUAST and what does it stand for? Provide an official source link.",
+    "expected_source_contains": [
+      "fuuast.edu.pk"
+    ],
+    "notes": "Any official about/landing page chunk is fine."
+  },
+  {
+    "id": "Q10",
+    "question": "Give the link for the bachelor's programs fee structure (morning) table.",
+    "expected_source_contains": [
+      "fee-structure-bachelors-programmes-morning"
+    ],
+    "notes": "Fee table page."
+  },
+  {
+    "id": "Q11",
+    "question": "How do I contact the university for admissions inquiries? Provide official link.",
+    "expected_source_contains": [
+      "contact",
+      "admission-morning"
+    ],
+    "notes": "Contact or admissions page."
+  },
+  {
+    "id": "Q12",
+    "question": "Find me the official page that lists the university's organizational structure.",
+    "expected_source_contains": [
+      "university-organization"
+    ],
+    "notes": "Org page."
+  },
+  {
+    "id": "Q13",
+    "question": "Give me the official website link for FUUAST.",
+    "expected_source_contains": [
+      "fuuast.edu.pk"
+    ],
+    "notes": "Homepage is fine."
+  },
+  {
+    "id": "Q14",
+    "question": "Where can I check the undergraduate program list? Provide official link.",
+    "expected_source_contains": [
+      "under-graduate-program"
+    ],
+    "notes": "UG programs page."
+  },
+  {
+    "id": "Q15",
+    "question": "Show me the official FUUAST fee structure morning page link (not a PDF if web page exists).",
+    "expected_source_contains": [
+      "morning-fee-structure",
+      "fee-structure-bachelors-programmes-morning"
+    ],
+    "notes": "Prefer web page."
+  },
+  {
+    "id": "Q16",
+    "question": "Provide the official link for FUUAST examination office contact details.",
+    "expected_source_contains": [
+      "contact-detail-of-examination-office"
+    ],
+    "notes": "Exam office contacts."
+  },
+  {
+    "id": "Q17",
+    "question": "What are the official contact details of FUUAST Gulshan Campus? Provide official source link.",
+    "expected_source_contains": [
+      "contact"
+    ],
+    "notes": "Contact page likely includes campus details."
+  },
+  {
+    "id": "Q18",
+    "question": "Find official admission morning announcement and summarize key points with the link.",
+    "expected_source_contains": [
+      "admission-morning"
+    ],
+    "notes": "Admissions morning."
+  },
+  {
+    "id": "Q19",
+    "question": "What is the procedure for admission (morning)? Provide official link.",
+    "expected_source_contains": [
+      "admission-morning"
+    ],
+    "notes": "Admissions morning page."
+  },
+  {
+    "id": "Q20",
+    "question": "Show the official page for Morning Fee Structure.",
+    "expected_source_contains": [
+      "morning-fee-structure"
+    ],
+    "notes": "Morning fee structure page."
+  },
+  {
+    "id": "Q21",
+    "question": "Provide the official page link for bachelors fee structure morning and mention what programs it covers.",
+    "expected_source_contains": [
+      "fee-structure-bachelors-programmes-morning"
+    ],
+    "notes": "Fee structure list/table page."
+  },
+  {
+    "id": "Q22",
+    "question": "Give the official link for FUUAST admissions morning and contact page together.",
+    "expected_source_contains": [
+      "admission-morning",
+      "contact"
+    ],
+    "notes": "Either is acceptable in top results."
+  },
+  {
+    "id": "Q23",
+    "question": "Where is the official page for the Examination Office contact details? Provide link.",
+    "expected_source_contains": [
+      "contact-detail-of-examination-office"
+    ],
+    "notes": "Exam office page."
+  },
+  {
+    "id": "Q24",
+    "question": "Give me the official link for undergraduate programs at FUUAST and summarize it.",
+    "expected_source_contains": [
+      "under-graduate-program"
+    ],
+    "notes": "UG programs page."
+  },
+  {
+    "id": "Q25",
+    "question": "Where can I see the morning fee structure for bachelor's programs? Provide official link.",
+    "expected_source_contains": [
+      "fee-structure-bachelors-programmes-morning",
+      "morning-fee-structure"
+    ],
+    "notes": "Fee pages."
+  },
+  {
+    "id": "Q26",
+    "question": "What is the official contact page URL for FUUAST? Provide it.",
+    "expected_source_contains": [
+      "contact"
+    ],
+    "notes": "Contact page."
+  },
+  {
+    "id": "Q27",
+    "question": "Find the university organization page and cite it.",
+    "expected_source_contains": [
+      "university-organization"
+    ],
+    "notes": "Org page."
+  },
+  {
+    "id": "Q28",
+    "question": "Find admission morning page and cite it.",
+    "expected_source_contains": [
+      "admission-morning"
+    ],
+    "notes": "Admissions morning."
+  },
+  {
+    "id": "Q29",
+    "question": "Find bachelors fee structure (morning) page and cite it.",
+    "expected_source_contains": [
+      "fee-structure-bachelors-programmes-morning"
+    ],
+    "notes": "Fee structure page."
+  },
+  {
+    "id": "Q30",
+    "question": "Find examination office contact details page and cite it.",
+    "expected_source_contains": [
+      "contact-detail-of-examination-office"
+    ],
+    "notes": "Exam office page."
+  }
+]
