@@ -35,6 +35,14 @@ ALLOWED_DOMAIN = urlparse(BASE).netloc
 
 HEADERS = {"User-Agent": "FUUAST-Academic-Assistant/1.0 (respectful crawler)"}
 
+IMPORTANT_PATHS = (
+    "/contact",
+    "/under-graduate-program",
+    "/university-organization",
+    "/contact-detail-of-examination-office",
+)
+
+
 SKIP_EXT = (
     ".jpg", ".jpeg", ".png", ".gif", ".svg", ".webp", ".ico",
     ".mp4", ".mp3", ".zip", ".rar", ".css", ".js",
@@ -191,12 +199,13 @@ def crawl(
                     continue
 
                 title, text = clean_html_to_text(r.text)
-                if not text or len(text) < min_text_chars:
-                    # still extract links to reach deeper important pages
-                    page_links, pdf_links = extract_links(r.text, url)
-                else:
-                    page_links, pdf_links = extract_links(r.text, url)
+                page_links, pdf_links = extract_links(r.text, url)
 
+                # Save short-but-important pages (e.g., /contact) even if below min_text_chars
+                path = (urlparse(url).path or "/").rstrip("/")
+                is_important = any(path == p.rstrip("/") for p in IMPORTANT_PATHS)
+
+                if text and (len(text) >= min_text_chars or is_important):
                     rec = {
                         "id": f"web::{sha1(url)[:12]}",
                         "source_type": "web",
