@@ -11,8 +11,8 @@
       "start": "09:00",
       "end": "09:50",
       "course": "Introduction to Computer Programing",
-      "teacher": "Dr Muhammad Sarim",
-      "room": null
+      "teacher": "Dr Muhammad SarIm",
+      "room": "Lab1"
     },
     {
       "day": "Monday",
@@ -22,7 +22,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Monday",
@@ -32,7 +32,7 @@
       "end": "11:30",
       "course": "Applied Physics",
       "teacher": "Mr A",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Monday",
@@ -42,7 +42,7 @@
       "end": "12:20",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr A",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Monday",
@@ -52,57 +52,7 @@
       "end": "01:10",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Lab1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Monday",
@@ -112,7 +62,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Dr Uzma Afzal",
-      "room": null
+      "room": "Lab2"
     },
     {
       "day": "Monday",
@@ -122,7 +72,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Monday",
@@ -132,7 +82,7 @@
       "end": "11:30",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr B",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Monday",
@@ -142,7 +92,7 @@
       "end": "12:20",
       "course": "Applied Physics",
       "teacher": "Mr B",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Monday",
@@ -152,57 +102,7 @@
       "end": "01:10",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Lab2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Monday",
@@ -212,7 +112,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Mr Sheikh Kashif Rafat",
-      "room": null
+      "room": "Lab3"
     },
     {
       "day": "Monday",
@@ -222,7 +122,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Monday",
@@ -232,7 +132,7 @@
       "end": "11:30",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr C",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Monday",
@@ -242,7 +142,7 @@
       "end": "12:20",
       "course": "Applied Physics",
       "teacher": "Mr C",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Monday",
@@ -252,57 +152,7 @@
       "end": "01:10",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Lab3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Library",
-      "teacher": null,
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Monday",
@@ -312,7 +162,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Mrs Salwa Iqbal",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Monday",
@@ -322,7 +172,7 @@
       "end": "10:40",
       "course": "Applied Physics",
       "teacher": "Mr D",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Monday",
@@ -332,7 +182,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Monday",
@@ -342,7 +192,7 @@
       "end": "12:20",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr D",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Monday",
@@ -352,57 +202,7 @@
       "end": "01:10",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Library",
-      "teacher": null,
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Monday",
@@ -412,7 +212,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Ns Nosshaba",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Monday",
@@ -422,7 +222,7 @@
       "end": "10:40",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr E",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Monday",
@@ -432,7 +232,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Monday",
@@ -442,7 +242,7 @@
       "end": "12:20",
       "course": "English Composition & Comprehension",
       "teacher": "Mr B",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Monday",
@@ -452,57 +252,7 @@
       "end": "01:10",
       "course": "Applied Physics",
       "teacher": "Mr E",
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Monday",
@@ -512,7 +262,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Ms Naheed Azeem",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Monday",
@@ -522,7 +272,7 @@
       "end": "10:40",
       "course": "Applied Physics",
       "teacher": "Mr F",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Monday",
@@ -532,7 +282,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Monday",
@@ -542,7 +292,7 @@
       "end": "12:20",
       "course": "English Composition & Comprehension",
       "teacher": "Mr B",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Monday",
@@ -552,57 +302,7 @@
       "end": "01:10",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr F",
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Monday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Tuesday",
@@ -611,8 +311,8 @@
       "start": "09:00",
       "end": "09:50",
       "course": "Introduction to Computer Programing",
-      "teacher": "Dr Muhammad Sarim",
-      "room": null
+      "teacher": "Dr Muhammad SarIm",
+      "room": "Room1"
     },
     {
       "day": "Tuesday",
@@ -622,7 +322,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Tuesday",
@@ -632,7 +332,7 @@
       "end": "11:30",
       "course": "Applied Physics",
       "teacher": "Mr A",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Tuesday",
@@ -642,7 +342,7 @@
       "end": "12:20",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr A",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Tuesday",
@@ -652,57 +352,7 @@
       "end": "01:10",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Tuesday",
@@ -712,7 +362,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Dr Uzma Afzal",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Tuesday",
@@ -722,7 +372,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Tuesday",
@@ -732,7 +382,7 @@
       "end": "11:30",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr B",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Tuesday",
@@ -742,7 +392,7 @@
       "end": "12:20",
       "course": "Applied Physics",
       "teacher": "Mr B",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Tuesday",
@@ -752,57 +402,7 @@
       "end": "01:10",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Tuesday",
@@ -812,7 +412,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Mr Sheikh Kashif Rafat",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Tuesday",
@@ -822,7 +422,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Tuesday",
@@ -832,7 +432,7 @@
       "end": "11:30",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr C",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Tuesday",
@@ -842,7 +442,7 @@
       "end": "12:20",
       "course": "Applied Physics",
       "teacher": "Mr C",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Tuesday",
@@ -852,57 +452,7 @@
       "end": "01:10",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Library",
-      "teacher": null,
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Tuesday",
@@ -912,7 +462,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Mrs Salwa Iqbal",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Tuesday",
@@ -922,7 +472,7 @@
       "end": "10:40",
       "course": "Applied Physics",
       "teacher": "Mr D",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Tuesday",
@@ -932,7 +482,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Tuesday",
@@ -942,7 +492,7 @@
       "end": "12:20",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr D",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Tuesday",
@@ -952,57 +502,7 @@
       "end": "01:10",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Library",
-      "teacher": null,
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Tuesday",
@@ -1012,7 +512,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Ns Nosshaba",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Tuesday",
@@ -1022,7 +522,7 @@
       "end": "10:40",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr E",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Tuesday",
@@ -1032,7 +532,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Tuesday",
@@ -1042,7 +542,7 @@
       "end": "12:20",
       "course": "Islamiat",
       "teacher": "Mr B",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Tuesday",
@@ -1052,57 +552,7 @@
       "end": "01:10",
       "course": "Applied Physics",
       "teacher": "Mr E",
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Tuesday",
@@ -1112,7 +562,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Ms Naheed Azeem",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Tuesday",
@@ -1122,7 +572,7 @@
       "end": "10:40",
       "course": "Applied Physics",
       "teacher": "Mr F",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Tuesday",
@@ -1132,7 +582,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Tuesday",
@@ -1142,7 +592,7 @@
       "end": "12:20",
       "course": "Islamiat",
       "teacher": "Mr B",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Tuesday",
@@ -1152,57 +602,7 @@
       "end": "01:10",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr F",
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Tuesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Wednesday",
@@ -1211,8 +611,8 @@
       "start": "09:00",
       "end": "09:50",
       "course": "Introduction to Computer Programing",
-      "teacher": "Dr Muhammad Sarim",
-      "room": null
+      "teacher": "Dr Muhammad SarIm",
+      "room": "Room1"
     },
     {
       "day": "Wednesday",
@@ -1222,7 +622,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Wednesday",
@@ -1232,7 +632,7 @@
       "end": "11:30",
       "course": "Applied Physics",
       "teacher": "Mr A",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Wednesday",
@@ -1242,7 +642,7 @@
       "end": "12:20",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr A",
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Wednesday",
@@ -1252,57 +652,7 @@
       "end": "01:10",
       "course": "Pre Calculus",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Room1",
-      "teacher": null,
-      "room": null
+      "room": "Room1"
     },
     {
       "day": "Wednesday",
@@ -1312,7 +662,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Dr Uzma Afzal",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Wednesday",
@@ -1322,7 +672,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Wednesday",
@@ -1332,7 +682,7 @@
       "end": "11:30",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr B",
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Wednesday",
@@ -1342,47 +692,7 @@
       "end": "12:20",
       "course": "Applied Physics",
       "teacher": "Mr B",
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room2",
-      "teacher": null,
-      "room": null
+      "room": "Room2"
     },
     {
       "day": "Wednesday",
@@ -1392,7 +702,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Mr Sheikh Kashif Rafat",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Wednesday",
@@ -1402,7 +712,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Wednesday",
@@ -1412,7 +722,7 @@
       "end": "11:30",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr C",
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Wednesday",
@@ -1422,47 +732,7 @@
       "end": "12:20",
       "course": "Applied Physics",
       "teacher": "Mr C",
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room3",
-      "teacher": null,
-      "room": null
+      "room": "Room3"
     },
     {
       "day": "Wednesday",
@@ -1472,7 +742,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Mrs Salwa Iqbal",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Wednesday",
@@ -1482,7 +752,7 @@
       "end": "10:40",
       "course": "Applied Physics",
       "teacher": "Mr D",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Wednesday",
@@ -1492,7 +762,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Wednesday",
@@ -1502,47 +772,7 @@
       "end": "12:20",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr D",
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room11",
-      "teacher": null,
-      "room": null
+      "room": "Room11"
     },
     {
       "day": "Wednesday",
@@ -1552,7 +782,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Ns Nosshaba",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Wednesday",
@@ -1562,7 +792,7 @@
       "end": "10:40",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr E",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Wednesday",
@@ -1572,7 +802,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Wednesday",
@@ -1582,47 +812,7 @@
       "end": "12:20",
       "course": "Applied Physics",
       "teacher": "Mr E",
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room12",
-      "teacher": null,
-      "room": null
+      "room": "Room12"
     },
     {
       "day": "Wednesday",
@@ -1632,7 +822,7 @@
       "end": "09:50",
       "course": "Introduction to Computer Programing",
       "teacher": "Ms Naheed Azeem",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Wednesday",
@@ -1642,7 +832,7 @@
       "end": "10:40",
       "course": "Applied Physics",
       "teacher": "Mr F",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Wednesday",
@@ -1652,7 +842,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Wednesday",
@@ -1662,47 +852,7 @@
       "end": "12:20",
       "course": "Calculus & Analytical Geometry",
       "teacher": "Mr F",
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Wednesday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Room13",
-      "teacher": null,
-      "room": null
+      "room": "Room13"
     },
     {
       "day": "Thursday",
@@ -1712,7 +862,7 @@
       "end": "09:50",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Thursday",
@@ -1722,7 +872,7 @@
       "end": "10:40",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Thursday",
@@ -1732,7 +882,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "LAB1"
     },
     {
       "day": "Thursday",
@@ -1742,7 +892,7 @@
       "end": "12:20",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "LAB1"
     },
     {
       "day": "Thursday",
@@ -1752,57 +902,7 @@
       "end": "01:10",
       "course": "Pre Calculus",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "LAB1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "LAB1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "LAB1",
-      "teacher": null,
-      "room": null
+      "room": "LAB1"
     },
     {
       "day": "Thursday",
@@ -1812,7 +912,7 @@
       "end": "09:50",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Thursday",
@@ -1822,7 +922,7 @@
       "end": "10:40",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Thursday",
@@ -1832,7 +932,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
+      "room": "LAB2"
     },
     {
       "day": "Thursday",
@@ -1842,47 +942,7 @@
       "end": "12:20",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "LAB2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "LAB2",
-      "teacher": null,
-      "room": null
+      "room": "LAB2"
     },
     {
       "day": "Thursday",
@@ -1892,7 +952,7 @@
       "end": "09:50",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "LAB3"
     },
     {
       "day": "Thursday",
@@ -1902,7 +962,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "LAB3"
     },
     {
       "day": "Thursday",
@@ -1912,7 +972,7 @@
       "end": "11:30",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Thursday",
@@ -1922,47 +982,7 @@
       "end": "12:20",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "LAB3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "LAB3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Thursday",
@@ -1972,7 +992,7 @@
       "end": "10:40",
       "course": "Introduction to Computer Programing",
       "teacher": "Mrs Salwa Iqbal",
-      "room": null
+      "room": "Lab4"
     },
     {
       "day": "Thursday",
@@ -1982,7 +1002,7 @@
       "end": "11:30",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Thursday",
@@ -1992,37 +1012,7 @@
       "end": "12:20",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Lab4",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Thursday",
@@ -2032,7 +1022,7 @@
       "end": "09:50",
       "course": "Islamiat",
       "teacher": "Mr B",
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Thursday",
@@ -2042,7 +1032,7 @@
       "end": "10:40",
       "course": "English Composition & Comprehension",
       "teacher": "Mr B",
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Thursday",
@@ -2052,37 +1042,7 @@
       "end": "11:30",
       "course": "Introduction to Computer Programing",
       "teacher": "Ns Nosshaba",
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Library",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Library",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Lab3",
-      "teacher": null,
-      "room": null
+      "room": "Lab3"
     },
     {
       "day": "Thursday",
@@ -2092,7 +1052,7 @@
       "end": "09:50",
       "course": "Islamiat",
       "teacher": "Mr B",
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Thursday",
@@ -2102,7 +1062,7 @@
       "end": "10:40",
       "course": "English Composition & Comprehension",
       "teacher": "Mr B",
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Thursday",
@@ -2112,37 +1072,7 @@
       "end": "11:30",
       "course": "Introduction to Computer Programing",
       "teacher": "Ms Naheed Azeem",
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Library",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Library",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Thursday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Lab4",
-      "teacher": null,
-      "room": null
+      "room": "Lab4"
     },
     {
       "day": "Friday",
@@ -2151,8 +1081,8 @@
       "start": "09:50",
       "end": "10:40",
       "course": "Introduction to Computer Programing",
-      "teacher": "Dr Muhammad Sarim",
-      "room": null
+      "teacher": "Dr Muhammad SarIm",
+      "room": "LAB2"
     },
     {
       "day": "Friday",
@@ -2162,7 +1092,7 @@
       "end": "11:30",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2172,7 +1102,7 @@
       "end": "12:20",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2182,47 +1112,7 @@
       "end": "01:10",
       "course": "Pre Calculus",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "LAB2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1A",
-      "capacity": 50,
-      "start": "12:30",
-      "end": "01:10",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2232,7 +1122,7 @@
       "end": "10:40",
       "course": "Introduction to Computer Programing",
       "teacher": "Dr Uzma Afzal",
-      "room": null
+      "room": "LAB3"
     },
     {
       "day": "Friday",
@@ -2242,7 +1132,7 @@
       "end": "11:30",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2252,37 +1142,7 @@
       "end": "12:20",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "LAB3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1B",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2292,7 +1152,7 @@
       "end": "10:40",
       "course": "Introduction to Computer Programing",
       "teacher": "Mr Sheikh Kashif Rafat",
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Friday",
@@ -2302,7 +1162,7 @@
       "end": "11:30",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Friday",
@@ -2312,37 +1172,7 @@
       "end": "12:20",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Library",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Library",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1C",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Library",
-      "teacher": null,
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Friday",
@@ -2352,7 +1182,7 @@
       "end": "09:50",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "LAB1"
     },
     {
       "day": "Friday",
@@ -2362,7 +1192,7 @@
       "end": "10:40",
       "course": "Fundamental of Programming",
       "teacher": "Dr Syed Akhtar Raza",
-      "room": null
+      "room": "LAB1"
     },
     {
       "day": "Friday",
@@ -2372,7 +1202,7 @@
       "end": "11:30",
       "course": "Islamiat",
       "teacher": "Mr A",
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Friday",
@@ -2382,47 +1212,7 @@
       "end": "12:20",
       "course": "English Composition & Comprehension",
       "teacher": "Mr A",
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "LAB1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "LAB1",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "Library",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1D",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "Library",
-      "teacher": null,
-      "room": null
+      "room": "Library"
     },
     {
       "day": "Friday",
@@ -2432,7 +1222,7 @@
       "end": "09:50",
       "course": "English Composition & Comprehension",
       "teacher": "Mr B",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2442,7 +1232,7 @@
       "end": "10:40",
       "course": "Islamiat",
       "teacher": "Mr B",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2452,7 +1242,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
+      "room": "LAB2"
     },
     {
       "day": "Friday",
@@ -2462,47 +1252,7 @@
       "end": "12:20",
       "course": "Fundamental of Programming",
       "teacher": "Dr Kashif Laeeq",
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "LAB2",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1E",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "LAB2",
-      "teacher": null,
-      "room": null
+      "room": "LAB2"
     },
     {
       "day": "Friday",
@@ -2512,7 +1262,7 @@
       "end": "09:50",
       "course": "English Composition & Comprehension",
       "teacher": "Mr B",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2522,7 +1272,7 @@
       "end": "10:40",
       "course": "Islamiat",
       "teacher": "Mr B",
-      "room": null
+      "room": "Hall"
     },
     {
       "day": "Friday",
@@ -2532,7 +1282,7 @@
       "end": "11:30",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
+      "room": "LAB3"
     },
     {
       "day": "Friday",
@@ -2542,47 +1292,7 @@
       "end": "12:20",
       "course": "Fundamental of Programming",
       "teacher": "Mr Muhammad Ahmed Ansari",
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:00",
-      "end": "09:50",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "09:50",
-      "end": "10:40",
-      "course": "Hall",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "10:40",
-      "end": "11:30",
-      "course": "LAB3",
-      "teacher": null,
-      "room": null
-    },
-    {
-      "day": "Friday",
-      "section": "BS1F",
-      "capacity": 50,
-      "start": "11:30",
-      "end": "12:30",
-      "course": "LAB3",
-      "teacher": null,
-      "room": null
+      "room": "LAB3"
     }
   ]
 }
