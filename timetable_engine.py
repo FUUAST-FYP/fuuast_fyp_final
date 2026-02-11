@@ -76,11 +76,11 @@ def _extract_teacher_candidate(text: str) -> Optional[str]:
         title = m.group(1).replace(".", "")
         name = _trim(m.group(2))
         cand = f"{title} {name}".strip()
-        return cand if len(name) >= 2 else cand  # keep even single-name
+        return cand if cand else None
 
     m2 = re.search(r"\b(timetable|schedule)\s+of\s+([A-Za-z]+(?:\s+[A-Za-z]+){0,4})\b", t, re.IGNORECASE)
     if m2:
-        return _trim(m2.group(2))
+        return _trim(m2.group(2)) or None
 
     return None
 
@@ -96,14 +96,31 @@ class TTEntry:
     teacher: Optional[str]
     room: Optional[str]
 
+
 class TimetableEngine:
+    """
+    Timetable Q&A for timetable.json
+
+    Fixes implemented:
+    - Merge room-only duplicate rows that were mistakenly parsed as separate "courses"
+    - Cleaner, non-boxy output formatting (no pipes/brackets)
+    - Correct intent routing so "What class does BS1B have..." does NOT trigger teacher availability mode
+    - Better teacher "did you mean" suggestions (no markdown)
+    """
+    HONORIFICS = {"dr", "mr", "ms", "mrs", "miss", "prof", "sir", "madam"}
+    STOPWORDS = {
+        "on","at","in","from","to","for","of","by","with",
+        "availability","available","free","busy","khali","schedule","timetable","routine","classes","class","lecture",
+    }
+
     def __init__(self, json_path: str):
         p = Path(json_path)
         data = json.loads(p.read_text(encoding="utf-8"))
         self.meta = data.get("meta", {})
-        self.entries: List[TTEntry] = []
+
+        raw_entries: List[TTEntry] = []
         for e in data.get("entries", []):
-            self.entries.append(TTEntry(
+            raw_entries.append(TTEntry(
                 day=str(e.get("day") or "").strip(),
                 section=str(e.get("section") or "").strip(),
                 capacity=e.get("capacity"),
@@ -114,7 +131,10 @@ class TimetableEngine:
                 room=e.get("room"),
             ))
 
-        # Build indexes
+        # Normalize to remove duplicates (Option A safety)
+        self.entries: List[TTEntry] = self._normalize_entries(raw_entries)
+
+        # Indexes
         self.teacher_names: List[str] = sorted({x.teacher for x in self.entries if x.teacher})
         self.section_names: List[str] = sorted({x.section for x in self.entries if x.section})
 
@@ -134,19 +154,98 @@ class TimetableEngine:
             for d in self.by_section[s]:
                 self.by_section[s][d].sort(key=lambda z: z.start)
 
-        self.slots_by_day: Dict[str, set[str]] = {}
+        self.slots_by_day: Dict[str, List[str]] = {}
         for x in self.entries:
-            self.slots_by_day.setdefault(x.day, set()).add(x.start)
+            self.slots_by_day.setdefault(x.day, set()).add(x.start)  # type: ignore[arg-type]
         self.slots_by_day = {d: sorted(v) for d, v in self.slots_by_day.items()}  # type: ignore[assignment]
 
-    HONORIFICS = {"dr", "mr", "ms", "mrs", "miss", "prof", "sir", "madam"}
-    STOPWORDS = {
-        "on","at","in","from","to","for","of","by","with",
-        "availability","available","free","busy","schedule","timetable","routine","classes","class","lecture",
-    }
+    # --------------------
+    # Normalization helpers
+    # --------------------
+    @staticmethod
+    def _looks_like_room_token(s: Optional[str]) -> bool:
+        if not s:
+            return False
+        x = (s or "").strip()
+        if not x:
+            return False
+        xl = x.lower().strip()
+        if xl in {"hall", "library"}:
+            return True
+        if re.fullmatch(r"(lab|room)\s*\d+", xl):
+            return True
+        if re.fullmatch(r"(lab|room)\s*[a-z]\d*", xl):
+            return True
+        # short single tokens that often represent room names
+        if len(xl) <= 10 and any(k in xl for k in ["lab", "room"]):
+            return True
+        return False
 
+    @classmethod
+    def _normalize_entries(cls, entries: List[TTEntry]) -> List[TTEntry]:
+        """
+        Many timetable.json versions mistakenly include an extra row per slot:
+          - real course row
+          - room row stored in `course` with teacher=None
+        We merge those into a single TTEntry with a real room value.
+        """
+        by_key: Dict[Tuple[str, str, str, str], List[TTEntry]] = {}
+        for e in entries:
+            key = (e.day, e.section, e.start, e.end)
+            by_key.setdefault(key, []).append(e)
 
+        out: List[TTEntry] = []
 
+        for key, items in by_key.items():
+            # identify "room-only" rows
+            room_only = [i for i in items if (not i.teacher) and cls._looks_like_room_token(i.course) and not i.room]
+            non_room = [i for i in items if i not in room_only]
+
+            # choose a room value from any available source
+            def pick_room() -> Optional[str]:
+                for i in items:
+                    if i.room and str(i.room).strip():
+                        return str(i.room).strip()
+                for i in room_only:
+                    if i.course and str(i.course).strip():
+                        return str(i.course).strip()
+                return None
+
+            room_value = pick_room()
+
+            if non_room:
+                for i in non_room:
+                    out.append(TTEntry(
+                        day=i.day,
+                        section=i.section,
+                        capacity=i.capacity,
+                        start=i.start,
+                        end=i.end,
+                        course=i.course,
+                        teacher=i.teacher,
+                        room=(i.room or room_value),
+                    ))
+            else:
+                # If we ONLY have room rows (rare), keep one as an empty class with room populated
+                ro = room_only[0] if room_only else items[0]
+                out.append(TTEntry(
+                    day=ro.day,
+                    section=ro.section,
+                    capacity=ro.capacity,
+                    start=ro.start,
+                    end=ro.end,
+                    course=ro.course if (ro.course and not cls._looks_like_room_token(ro.course)) else None,
+                    teacher=ro.teacher,
+                    room=room_value,
+                ))
+
+        # stable ordering
+        out.sort(key=lambda z: (z.day, z.section, z.start, (z.course or "")))
+        return out
+
+    # --------------------
+    # Matching helpers
+    # --------------------
     @staticmethod
     def _strip_honorifics(s: str) -> str:
         parts = _norm(s).split()
@@ -160,7 +259,6 @@ class TimetableEngine:
         toks = [t for t in toks if t not in TimetableEngine.STOPWORDS and t not in day_words]
         return set(toks)
 
-
     def _best_match_teacher(self, query: str) -> Optional[str]:
         cand = _extract_teacher_candidate(query)
         q_raw = cand or query
@@ -169,8 +267,7 @@ class TimetableEngine:
         if not q_tokens:
             return None
 
-        # 1) normal safe matching: token overlap
-        overlap_candidates = []
+        overlap_candidates: List[str] = []
         for t in self.teacher_names:
             t_tokens = self._tokens(t)
             if set(q_tokens) & t_tokens:
@@ -192,7 +289,7 @@ class TimetableEngine:
             best, score = best_by_full_ratio(overlap_candidates)
             return best if best and score >= 0.65 else None
 
-        # 2) fallback: near-token match (handles OCR typos like sarim vs sarlm)
+        # Fallback: near-token match (typos)
         best = None
         best_tok_score = 0.0
         for t in self.teacher_names:
@@ -208,13 +305,11 @@ class TimetableEngine:
                         best_tok_score = tok_score
                         best = t
 
-        # High threshold to avoid wrong teacher guesses
         return best if best and best_tok_score >= 0.85 else None
 
     def _teacher_from_history(self, history: Optional[List[Dict[str, str]]]) -> Optional[str]:
         if not history:
             return None
-        # scan last turns for a teacher name mention
         for turn in reversed(history[-12:]):
             txt = turn.get("text") or ""
             t = self._best_match_teacher(txt)
@@ -222,6 +317,35 @@ class TimetableEngine:
                 return t
         return None
 
+    # --------------------
+    # Formatting helpers
+    # --------------------
+    @staticmethod
+    def _fmt_section_line(c: TTEntry) -> str:
+        course = (c.course or "—").strip()
+        teacher = (c.teacher or "").strip()
+        room = (c.room or "").strip()
+
+        line = f"- {c.start}–{c.end}: {course}"
+        if teacher:
+            line += f" — {teacher}"
+        if room:
+            line += f", {room}"
+        return line
+
+    @staticmethod
+    def _fmt_teacher_line(c: TTEntry) -> str:
+        course = (c.course or "—").strip()
+        section = (c.section or "—").strip()
+        room = (c.room or "—").strip()
+        line = f"- {c.start}–{c.end}: {course}, {section}"
+        if room and room != "—":
+            line += f", {room}"
+        return line
+
+    # --------------------
+    # Main answer
+    # --------------------
     def answer(self, message: str, history: Optional[List[Dict[str, str]]] = None) -> Optional[Dict[str, Any]]:
         msg = message or ""
         low = _norm(msg)
@@ -231,67 +355,61 @@ class TimetableEngine:
         section = _extract_section(msg)
 
         # Intent keywords
-        is_avail = any(k in low for k in ["available", "availability", "free", "busy", "khali", "class", "lecture"])
-        is_sched = any(k in low for k in ["timetable", "time table", "schedule", "classes", "routine"])
+        is_avail = any(k in low for k in ["available", "availability", "free", "busy", "khali"])
+        is_sched = any(k in low for k in ["timetable", "time table", "schedule", "classes", "class", "lecture", "routine"])
         is_room = "room" in low or "lab" in low
 
         # Did user explicitly mention a teacher name in THIS message?
-        teacher_candidate = _extract_teacher_candidate(msg)  # e.g., "Miss Shazia", "Dr Uzma Afzal"
+        teacher_candidate = _extract_teacher_candidate(msg)
 
         # First try direct match (safe matching)
         teacher = self._best_match_teacher(msg)
 
-        #  NEW: Day/time-only follow-up handling (e.g., user replies "Monday" or "mon" after bot asked day)
-        # If user message contains ONLY day/time (no intent words, no teacher, no section), treat it as follow-up.
-        followup_day_time_only = (
-            (day or time) and
-            not teacher_candidate and
-            not section and
-            not (is_avail or is_sched or is_room) and
-            len(low.split()) <= 3
-        )
-        if followup_day_time_only:
-            t_hist = self._teacher_from_history(history)
-            if t_hist:
-                teacher = t_hist
-                is_avail = True  # force timetable availability flow
+        timetable_intent = is_avail or is_sched or is_room or ("timetable" in low) or ("schedule" in low) or ("bs" in low)
 
-        timetable_intent = is_avail or is_sched or is_room or ("timetable" in low) or ("schedule" in low)
-
-        #  NEW: If user mentioned a teacher, but that teacher is NOT in timetable, DO NOT use history fallback.
+        # Teacher mentioned but not found -> suggestions (no markdown)
         if timetable_intent and teacher_candidate and not teacher:
-            known = ", ".join(self.teacher_names[:12])
-            more = "..." if len(self.teacher_names) > 12 else ""
+            # Suggest close matches (including cases like: "miss uzma")
+            suggestions = difflib.get_close_matches(teacher_candidate, self.teacher_names, n=4, cutoff=0.55)
+            if not suggestions:
+                # also try without honorifics, but map back to full names
+                stripped = self._strip_honorifics(teacher_candidate)
+                stripped_map = {self._strip_honorifics(t): t for t in self.teacher_names}
+                stripped_list = list(stripped_map.keys())
+                stripped_sugs = difflib.get_close_matches(stripped, stripped_list, n=4, cutoff=0.55)
+                suggestions = [stripped_map.get(s, s) for s in stripped_sugs]
+            if suggestions:
+                sug_lines = "\n".join(f"- {s}" for s in suggestions[:4])
+                return {
+                    "answer": f'I couldn’t find "{teacher_candidate}" in the uploaded timetable.\nDid you mean:\n{sug_lines}',
+                    "sources": [self._source()],
+                }
             return {
-                "answer": (
-                    f"I couldn’t find **{teacher_candidate}** in the uploaded timetable.\n\n"
-                    f"Available teachers in this timetable include: {known}{more}\n\n"
-                    "Tip: use the exact name as written in timetable.json (e.g., 'Dr Uzma Afzal')."
-                ),
+                "answer": f'I couldn’t find "{teacher_candidate}" in the uploaded timetable. Try using the exact name as written in the timetable.',
                 "sources": [self._source()],
             }
 
-        #  Only use history teacher if user did NOT mention a teacher in current message
-        if not teacher and is_avail and not teacher_candidate:
+        # Only use history teacher if user did NOT mention a teacher AND user did NOT mention a section
+        if not teacher and is_avail and not teacher_candidate and not section:
             teacher = self._teacher_from_history(history)
 
         # If timetable intent exists but still no teacher/section
         if timetable_intent and not teacher and not section:
             return {
                 "answer": (
-                    "I couldn't detect a teacher or section for timetable.\n"
-                    "Try: 'Is Dr Uzma Afzal free on Monday?' or 'BS1A timetable Monday'."
+                    'I couldn’t detect a teacher or section.\n'
+                    'Try: "BS1A timetable Monday" or "Is Dr Uzma Afzal free on Monday?"'
                 ),
                 "sources": [self._source()],
             }
 
         # 1) Teacher availability / schedule
-        if teacher and (is_avail or is_sched):
+        if teacher and (is_avail or is_sched) and not section:
             if not day:
                 return {
                     "answer": (
-                        f"Please mention the day (Mon/Tue/...) so I can check {teacher}'s availability.\n"
-                        f"Example: “Is {teacher} free on Monday?”"
+                        f"Please mention the day (Mon/Tue/...) so I can check {teacher}.\n"
+                        f'Example: "Is {teacher} free on Monday?"'
                     ),
                     "sources": [self._source()],
                 }
@@ -300,63 +418,83 @@ class TimetableEngine:
             if time:
                 hit = next((c for c in classes if c.start == time), None)
                 if hit:
+                    details = self._fmt_teacher_line(hit).lstrip("- ").strip()
                     return {
-                        "answer": (
-                            f"{teacher} is BUSY on {day} at {time}–{hit.end}.\n"
-                            f"Class: {hit.course or '—'} | Section: {hit.section} | Room: {hit.room or '—'}"
-                        ),
+                        "answer": f"{teacher} is BUSY on {day} at {time}–{hit.end}.\n{details}",
                         "sources": [self._source()],
                     }
-                else:
-                    return {
-                        "answer": f"{teacher} is FREE on {day} at {time} (no class in timetable at that slot).",
-                        "sources": [self._source()],
-                    }
+                return {
+                    "answer": f"{teacher} is FREE on {day} at {time} (no class in timetable at that slot).",
+                    "sources": [self._source()],
+                }
 
+            # Full schedule
+            if not classes:
+                return {
+                    "answer": f"{teacher} has no classes listed on {day}.",
+                    "sources": [self._source()],
+                }
+
+            lines = [self._fmt_teacher_line(c) for c in classes]
+
+            # Free slots list (optional, but useful)
             busy_slots = {c.start for c in classes}
             all_slots = self.slots_by_day.get(day, [])
             free_slots = [s for s in all_slots if s not in busy_slots]
-
-            lines = [f"{teacher} schedule on {day}:"]
-            if classes:
-                for c in classes:
-                    lines.append(f"- {c.start}–{c.end}: {c.course or '—'} (Section {c.section}, Room {c.room or '—'})")
-            else:
-                lines.append("- No classes found (free for all listed slots).")
-
             if free_slots:
-                lines.append("\nFree slots:")
-                lines.append(" - " + ", ".join(free_slots))
+                lines.append("")
+                lines.append("Free slots: " + ", ".join(free_slots))
 
             return {"answer": "\n".join(lines), "sources": [self._source()]}
 
         # 2) Section schedule / room query
         if section and (is_sched or is_room or "bs" in low):
+            # if user asked a specific day
             if day:
                 classes = self.by_section.get(section, {}).get(day, [])
                 if not classes:
                     return {"answer": f"No classes found for {section} on {day}.", "sources": [self._source()]}
-                lines = [f"{section} timetable on {day}:"]
-                for c in classes:
+
+                # if user asked a specific time
+                if time:
+                    hit = next((c for c in classes if c.start == time), None)
+                    if not hit:
+                        return {"answer": f"No class found for {section} on {day} at {time}.", "sources": [self._source()]}
                     if is_room:
-                        lines.append(f"- {c.start}–{c.end}: Room {c.room or '—'} ({c.course or '—'} | {c.teacher or '—'})")
-                    else:
-                        lines.append(f"- {c.start}–{c.end}: {c.course or '—'} ({c.teacher or '—'}) | Room {c.room or '—'}")
+                        room = (hit.room or "—").strip()
+                        return {"answer": f"- {hit.start}–{hit.end}: {room}", "sources": [self._source()]}
+                    return {"answer": self._fmt_section_line(hit), "sources": [self._source()]}
+
+                # full day view
+                if is_room:
+                    lines = []
+                    for c in classes:
+                        room = (c.room or "—").strip()
+                        course = (c.course or "—").strip()
+                        teacher2 = (c.teacher or "—").strip()
+                        lines.append(f"- {c.start}–{c.end}: {room} — {course}, {teacher2}")
+                    return {"answer": "\n".join(lines), "sources": [self._source()]}
+
+                lines = [self._fmt_section_line(c) for c in classes]
                 return {"answer": "\n".join(lines), "sources": [self._source()]}
 
+            # weekly summary
             days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
-            lines = [f"{section} weekly timetable summary:"]
+            out_lines: List[str] = []
             for d in days:
                 classes = self.by_section.get(section, {}).get(d, [])
                 if not classes:
                     continue
-                lines.append(f"\n{d}:")
-                for c in classes:
-                    lines.append(f"- {c.start}–{c.end}: {c.course or '—'} ({c.teacher or '—'}) | {c.room or '—'}")
-            return {"answer": "\n".join(lines), "sources": [self._source()]}
+                out_lines.append(f"{d}:")
+                out_lines.extend(self._fmt_section_line(c) for c in classes)
+                out_lines.append("")
+
+            if not out_lines:
+                return {"answer": f"No classes found for {section}.", "sources": [self._source()]}
+
+            return {"answer": "\n".join(out_lines).rstrip(), "sources": [self._source()]}
 
         return None
-
 
     def _source(self) -> Dict[str, Any]:
         src = self.meta.get("source_file", "Timetable")

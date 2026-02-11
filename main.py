@@ -241,6 +241,16 @@ def looks_like_timetable(msg_low: str) -> bool:
     has_entity = bool(TT_SECTION_RE.search(msg_low)) or any(w in msg_low for w in TT_TEACHER_WORDS)
     return has_intent and has_entity
 
+# ---------------------------
+# Fee Query Hinting (helps retrieval)
+# ---------------------------
+FEE_HINT_WORDS = ("fee", "fees", "fee structure", "structure", "tuition", "charges", "semester", "admission fee", "bscs", "bsse", "bba", "mba")
+
+def looks_like_fee(msg_low: str) -> bool:
+    m = (msg_low or "").lower()
+    return any(w in m for w in FEE_HINT_WORDS)
+
+
 def _build_sources(docs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     sources: List[Dict[str, Any]] = []
     seen = set()
@@ -430,8 +440,8 @@ def chat(req: ChatRequest):
             }
 
         # Timetable is loaded but teacher/section not found
-        known = ", ".join(tt.teacher_names[:12])
-        more = "..." if len(tt.teacher_names) > 12 else ""
+        known = ", ".join(tt.teacher_names[:8])
+        more = "..." if len(tt.teacher_names) > 8 else ""
         return {
             "status": "ok",
             "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
@@ -455,7 +465,8 @@ def chat(req: ChatRequest):
         }
 
     search_q = normalize_query(msg)
-    docs = rag.search(search_q, top_k=max(1, min(req.top_k, 8)))
+    top_k_used = max(1, min((max(req.top_k, 6) if looks_like_fee(search_q) else req.top_k), 8))
+    docs = rag.search(search_q, top_k=top_k_used)
 
     answer = _answer_with_llm(msg, docs)
     sources = _build_sources(docs)

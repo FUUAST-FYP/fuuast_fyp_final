@@ -130,54 +130,82 @@ def parse_sheet(ws) -> Dict[str, Any]:
                 continue
 
             # Extract time columns in this header row
-            time_cols: List[Tuple[int, time]] = []
-            room_cols_by_time: Dict[str, int] = {}
-
-            # scan all columns, collect time objects
+            # NOTE: In the FUUAST sheet, the time headers for CLASSES and ROOMS are often in the SAME ROW
+            # and may be continuous columns. The reliable separator is that the time values repeat
+            # (e.g., 09:00 appears twice). We split at the first repeated time.
             time_positions = [(col, ws.cell(r, col).value) for col in range(1, max_c + 1)]
-            time_positions = [(col, v) for (col, v) in time_positions if isinstance(v, time)]
+            time_positions = [(col, v) for (col, v) in time_positions if isinstance(v, time) and col >= 4]
 
-            # Heuristic: first segment (classes) is the first continuous time block starting from col>=4
-            # second segment (rooms) is another block later in the row.
-            segs: List[List[Tuple[int, time]]] = []
-            current: List[Tuple[int, time]] = []
-            last_col = None
-            for col, tv in time_positions:
-                if last_col is None or col == last_col + 1:
-                    current.append((col, tv))
-                else:
-                    if current:
-                        segs.append(current)
-                    current = [(col, tv)]
-                last_col = col
-            if current:
-                segs.append(current)
+            if not time_positions:
+                r += 1
+                continue
 
-            class_seg = None
-            room_seg = None
-            # pick the earliest segment whose first col >= 4 as class seg
-            for seg in segs:
-                if seg[0][0] >= 4:
-                    class_seg = seg
+            class_seg: Optional[List[Tuple[int, time]]] = None
+            room_seg: Optional[List[Tuple[int, time]]] = None
+
+            # 1) Primary split: first repeated time marks start of room segment
+            seen_times: set[Tuple[int, int]] = set()
+            split_idx: Optional[int] = None
+            for i, (col, tv) in enumerate(time_positions):
+                key = (tv.hour, tv.minute)
+                if key in seen_times:
+                    split_idx = i
                     break
-            # pick the next segment after class_seg as room seg (if exists)
-            if class_seg:
-                class_idx = segs.index(class_seg)
-                if class_idx + 1 < len(segs):
-                    room_seg = segs[class_idx + 1]
+                seen_times.add(key)
+
+            if split_idx and split_idx >= 2:
+                class_seg = time_positions[:split_idx]
+                room_seg = time_positions[split_idx:]
+            else:
+                # 2) Fallback split by column gaps (older heuristic)
+                segs: List[List[Tuple[int, time]]] = []
+                current: List[Tuple[int, time]] = []
+                last_col = None
+                for col, tv in time_positions:
+                    if last_col is None or col == last_col + 1:
+                        current.append((col, tv))
+                    else:
+                        if current:
+                            segs.append(current)
+                        current = [(col, tv)]
+                    last_col = col
+                if current:
+                    segs.append(current)
+
+                if segs:
+                    class_seg = segs[0]
+                    room_seg = segs[1] if len(segs) > 1 else None
 
             if not class_seg:
                 r += 1
                 continue
 
-            time_cols = class_seg
-            times_only = [tv for _, tv in time_cols]
+            times_only = [tv for _, tv in class_seg]
             delta = infer_slot_delta(times_only)
 
-            # Build time -> room_col map by matching same time in room segment
+            # Build class start time -> room column mapping.
+            # Room headers sometimes differ slightly (e.g., 12:20 vs 12:30), so we match by nearest time (<=20 min).
+            room_cols_by_time: Dict[str, int] = {}
             if room_seg:
+                room_cands: List[Tuple[int, int]] = []  # (col, minutes)
                 for col, tv in room_seg:
-                    room_cols_by_time[t_to_str(tv)] = col
+                    room_cands.append((col, to_minutes(tv.hour, tv.minute)))
+
+                for col, tv in class_seg:
+                    start_str = t_to_str(tv)
+                    target_m = to_minutes(tv.hour, tv.minute)
+                    best_col = None
+                    best_diff = 10**9
+                    for rc, rm in room_cands:
+                        diff = abs(rm - target_m)
+                        if diff < best_diff:
+                            best_diff = diff
+                            best_col = rc
+                    if best_col is not None and best_diff <= 20:
+                        room_cols_by_time[start_str] = best_col
+
+            # The class columns are ONLY the class segment
+            time_cols = class_seg
 
             # Now process section rows until next header/day block
             r += 1

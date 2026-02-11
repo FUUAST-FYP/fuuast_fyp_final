@@ -246,23 +246,47 @@ class RAGPipeline:
                 # still allow URL-based must hits (handled below)
                 base = 0.0
             score = base + self._url_boost(intents, url, doc)
+            # Extra boost for program-specific fee queries (helps pick the right chunk)
+            if intents.get("fee") and ("bscs" in q_tokens):
+                if "bscs" in set(dtoks):
+                    score += 8.0
+
             scored.append((score, doc))
 
         # Sort by score descending
         scored.sort(key=lambda x: x[0], reverse=True)
 
-        # Deduplicate by URL
+        # Deduplicate by DOC ID (allow multiple chunks per URL)
         out: List[Dict[str, Any]] = []
-        seen_urls: set = set()
+        seen_keys: set = set()
+
+        def _dedup_key(doc: Dict[str, Any]) -> str:
+            doc_id = str(doc.get("id") or "").strip()
+            if doc_id:
+                return f"id:{doc_id}"
+
+            url = str(doc.get("url") or "").strip().lower()
+            # Try to preserve multiple chunks from same URL
+            chunk_idx = doc.get("chunk_index")
+            if chunk_idx is None:
+                chunk_idx = doc.get("chunk_id")
+            if chunk_idx is None:
+                chunk_idx = doc.get("page")
+            if url and chunk_idx is not None:
+                return f"url:{url}#chunk:{chunk_idx}"
+
+            if url:
+                return f"url:{url}"
+
+            # last resort
+            text = _safe_get_text(doc)
+            return f"text:{hash(text)}"
 
         def _push(doc: Dict[str, Any]) -> None:
-            url = str(doc.get("url") or "")
-            key = url.strip().lower()
-            if not key:
-                key = str(doc.get("id") or "")
-            if key in seen_urls:
+            key = _dedup_key(doc)
+            if key in seen_keys:
                 return
-            seen_urls.add(key)
+            seen_keys.add(key)
             out.append(doc)
 
         # Hard-include target URLs first (if present)
